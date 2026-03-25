@@ -21,6 +21,7 @@ return Application::configure(basePath: dirname(__DIR__))
                     require base_path('routes/api/user.php');
                     require base_path('routes/api/report.php');
                     require base_path('routes/api/stats.php');
+                    require base_path('routes/api/health.php');
                 });
         },
     )
