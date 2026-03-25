@@ -1,24 +1,122 @@
 /**
- * SplashScreen — Full screen logo. Auto-navigates after 1.5s.
- * Plays shh-open sound (0.3s) via expo-av if not silent mode.
+ * SplashScreen — Immersive 2026 splash with pulsing rings, breathing emoji,
+ * staggered dot animation. Auto-navigates after 2s.
  */
 import React, { useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withRepeat,
+  withTiming,
+  Easing,
+} from 'react-native-reanimated';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Audio } from 'expo-av';
-import ShhText from '../components/atoms/ShhText';
+import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '../stores/useAuthStore';
 import { colors } from '../theme/colors';
+import { typography } from '../theme/typography';
 import type { RootStackParamList } from '../types';
 
 type Nav = NativeStackNavigationProp<RootStackParamList, 'Splash'>;
 
+const RING_OUTER_SIZE = 180;
+const RING_INNER_SIZE = 140;
+
+function PulsingRing({
+  size,
+  borderColor,
+  delay,
+}: {
+  size: number;
+  borderColor: string;
+  delay: number;
+}) {
+  const scale = useSharedValue(1);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      scale.value = withRepeat(
+        withTiming(1.04, { duration: 2000, easing: Easing.inOut(Easing.ease) }),
+        -1,
+        true,
+      );
+    }, delay);
+    return () => clearTimeout(timeout);
+  }, [delay, scale]);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
+
+  return (
+    <Animated.View
+      style={[
+        {
+          position: 'absolute',
+          width: size,
+          height: size,
+          borderRadius: size / 2,
+          borderWidth: 1.5,
+          borderColor,
+        },
+        animatedStyle,
+      ]}
+    />
+  );
+}
+
+function PulsingDot({ delay }: { delay: number }) {
+  const scale = useSharedValue(0.5);
+  const opacity = useSharedValue(0.3);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      scale.value = withRepeat(
+        withTiming(1, { duration: 800, easing: Easing.inOut(Easing.ease) }),
+        -1,
+        true,
+      );
+      opacity.value = withRepeat(
+        withTiming(1, { duration: 800, easing: Easing.inOut(Easing.ease) }),
+        -1,
+        true,
+      );
+    }, delay);
+    return () => clearTimeout(timeout);
+  }, [delay, scale, opacity]);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+    opacity: opacity.value,
+  }));
+
+  return <Animated.View style={[styles.dot, animatedStyle]} />;
+}
+
 export default function SplashScreen() {
+  const { t } = useTranslation();
   const navigation = useNavigation<Nav>();
   const restoreToken = useAuthStore((s) => s.restoreToken);
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const isLoading = useAuthStore((s) => s.isLoading);
+
+  // Breathing emoji animation
+  const emojiScale = useSharedValue(1);
+
+  useEffect(() => {
+    emojiScale.value = withRepeat(
+      withTiming(1.08, { duration: 2000, easing: Easing.inOut(Easing.ease) }),
+      -1,
+      true,
+    );
+  }, [emojiScale]);
+
+  const emojiAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: emojiScale.value }],
+  }));
 
   useEffect(() => {
     void restoreToken();
@@ -46,7 +144,7 @@ export default function SplashScreen() {
     };
   }, []);
 
-  // Auto-navigate after 1.5s once auth state is resolved
+  // Auto-navigate after 2s once auth state is resolved
   useEffect(() => {
     if (isLoading) return;
 
@@ -56,16 +154,48 @@ export default function SplashScreen() {
       } else {
         navigation.reset({ index: 0, routes: [{ name: 'Auth' }] });
       }
-    }, 1500);
+    }, 2000);
 
     return () => clearTimeout(timer);
   }, [isLoading, isAuthenticated, navigation]);
 
   return (
     <View style={styles.container}>
-      <ShhText variant="display" style={styles.logo}>
-        {'\ud83e\udd2b'}
-      </ShhText>
+      <View style={styles.centerContent}>
+        {/* Concentric pulsing rings */}
+        <View style={styles.ringsContainer}>
+          <PulsingRing
+            size={RING_OUTER_SIZE}
+            borderColor="rgba(220,251,78,0.06)"
+            delay={200}
+          />
+          <PulsingRing
+            size={RING_INNER_SIZE}
+            borderColor="rgba(220,251,78,0.15)"
+            delay={0}
+          />
+
+          {/* Center emoji */}
+          <Animated.Text style={[styles.emoji, emojiAnimatedStyle]}>
+            {'\ud83e\udd2b'}
+          </Animated.Text>
+        </View>
+
+        {/* App name */}
+        <Animated.Text style={styles.appName}>SHH ME</Animated.Text>
+
+        {/* Tagline */}
+        <Animated.Text style={styles.tagline}>
+          {t('splash.tagline')}
+        </Animated.Text>
+
+        {/* Staggered pulsing dots */}
+        <View style={styles.dotsContainer}>
+          <PulsingDot delay={0} />
+          <PulsingDot delay={200} />
+          <PulsingDot delay={400} />
+        </View>
+      </View>
     </View>
   );
 }
@@ -73,12 +203,46 @@ export default function SplashScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.dark,
+    backgroundColor: '#111111',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  logo: {
-    fontSize: 64,
-    color: colors.primary,
+  centerContent: {
+    alignItems: 'center',
+  },
+  ringsContainer: {
+    width: RING_OUTER_SIZE,
+    height: RING_OUTER_SIZE,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 28,
+  },
+  emoji: {
+    fontSize: 80,
+  },
+  appName: {
+    ...typography.displayExtra,
+    fontSize: 30,
+    color: colors.white,
+    letterSpacing: 5,
+    marginBottom: 6,
+  },
+  tagline: {
+    ...typography.body,
+    fontSize: 13,
+    color: '#333333',
+    marginBottom: 28,
+  },
+  dotsContainer: {
+    flexDirection: 'row',
+    gap: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  dot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: colors.primary,
   },
 });

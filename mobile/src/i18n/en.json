@@ -2,13 +2,22 @@
   "app": {
     "name": "Shh Me"
   },
+  "splash": {
+    "tagline": "Someone beats for you"
+  },
   "auth": {
     "signInApple": "Continue with Apple",
     "signInGoogle": "Continue with Google",
     "signInEmail": "Continue with Email",
     "emailPlaceholder": "Your email",
     "otpSent": "Code sent to your email",
-    "otpPlaceholder": "Enter code"
+    "otpPlaceholder": "Enter code",
+    "title": "Someone is thinking of you.",
+    "subtitle": "Send an anonymous secret.\nLet the photo betray you, gently.",
+    "legal": "By continuing, you agree to our ",
+    "terms": "Terms",
+    "and": " and ",
+    "privacy": "Privacy"
   },
   "onboarding": {
     "birthYear": {

@@ -1,22 +1,21 @@
 /**
- * BirthYearScreen — Year picker for age verification (18+).
- * If underage, shows gentle blocking message.
+ * BirthYearScreen — Immersive year picker for age verification (18+).
+ * Arrow-based year selector with huge year display.
+ * If underage, shows blocking state with red accent.
  */
-import React, { useState, useMemo, useRef } from 'react';
+import React, { useState } from 'react';
 import {
   View,
-  FlatList,
   TouchableOpacity,
   StyleSheet,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useTranslation } from 'react-i18next';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import ShhText from '../../components/atoms/ShhText';
 import { apiRequest } from '../../services/api';
 import { useAuthStore } from '../../stores/useAuthStore';
-import { colors } from '../../theme/colors';
-import { spacing } from '../../theme/spacing';
 import type { RootStackParamList } from '../../types';
 
 type Nav = NativeStackNavigationProp<RootStackParamList, 'BirthYear'>;
@@ -29,36 +28,28 @@ export default function BirthYearScreen() {
   const { t } = useTranslation();
   const navigation = useNavigation<Nav>();
   const token = useAuthStore((s) => s.token);
-  const [selectedYear, setSelectedYear] = useState<number | null>(null);
-  const [isBlocked, setIsBlocked] = useState(false);
+  const [year, setYear] = useState(2000);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const flatListRef = useRef<FlatList<number>>(null);
 
-  const years = useMemo(() => {
-    const list: number[] = [];
-    for (let y = CURRENT_YEAR; y >= MIN_YEAR; y--) {
-      list.push(y);
-    }
-    return list;
-  }, []);
+  const age = CURRENT_YEAR - year;
+  const isBlocked = age < MIN_AGE;
 
-  const handleSelect = (year: number) => {
-    setSelectedYear(year);
-    if (CURRENT_YEAR - year < MIN_AGE) {
-      setIsBlocked(true);
-    } else {
-      setIsBlocked(false);
-    }
+  const incrementYear = () => {
+    if (year < CURRENT_YEAR) setYear((y) => y + 1);
+  };
+
+  const decrementYear = () => {
+    if (year > MIN_YEAR) setYear((y) => y - 1);
   };
 
   const handleConfirm = async () => {
-    if (!selectedYear || isBlocked || isSubmitting) return;
+    if (isBlocked || isSubmitting) return;
 
     setIsSubmitting(true);
     try {
       await apiRequest('/user/birth-year', {
         method: 'PUT',
-        body: { birth_year: selectedYear },
+        body: { birth_year: year },
         token,
       });
       navigation.reset({ index: 0, routes: [{ name: 'Home' }] });
@@ -69,148 +60,205 @@ export default function BirthYearScreen() {
     }
   };
 
-  if (isBlocked) {
-    return (
-      <View style={styles.container}>
-        <View style={styles.blockedContent}>
-          <ShhText variant="display" style={styles.blockedEmoji}>
-            {'\ud83e\udd2b'}
-          </ShhText>
-          <ShhText variant="body" style={styles.blockedText}>
-            {t('onboarding.birthYear.blocked')}
-          </ShhText>
-        </View>
-      </View>
-    );
-  }
-
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <ShhText variant="display" style={styles.title}>
-          {t('onboarding.birthYear.title')}
-        </ShhText>
-        <ShhText variant="body" style={styles.subtitle}>
-          {t('onboarding.birthYear.subtitle')}
-        </ShhText>
-      </View>
-
-      <FlatList
-        ref={flatListRef}
-        data={years}
-        keyExtractor={(item) => item.toString()}
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            style={[
-              styles.yearItem,
-              selectedYear === item && styles.yearItemSelected,
-            ]}
-            onPress={() => handleSelect(item)}
-            activeOpacity={0.7}
-          >
-            <ShhText
-              variant="display"
-              style={[
-                styles.yearText,
-                selectedYear === item && styles.yearTextSelected,
-              ]}
-            >
-              {item}
-            </ShhText>
-          </TouchableOpacity>
-        )}
-        contentContainerStyle={styles.listContent}
-        showsVerticalScrollIndicator={false}
-      />
-
-      {selectedYear && !isBlocked && (
+    <SafeAreaView style={styles.safeArea}>
+      <View style={styles.container}>
+        {/* Back button */}
         <TouchableOpacity
-          style={[styles.confirmButton, isSubmitting && styles.confirmDisabled]}
-          onPress={handleConfirm}
-          disabled={isSubmitting}
-          activeOpacity={0.8}
+          style={styles.backButton}
+          onPress={() => navigation.goBack()}
+          activeOpacity={0.7}
         >
-          <ShhText variant="body" style={styles.confirmText}>
-            {t('onboarding.birthYear.confirm')}
+          <ShhText variant="body" style={styles.backText}>
+            {'\u2039'}
           </ShhText>
         </TouchableOpacity>
-      )}
-    </View>
+
+        {/* Centered body */}
+        <View style={styles.body}>
+          <ShhText variant="display" style={styles.title}>
+            {t('onboarding.birthYear.title')}
+          </ShhText>
+          <ShhText variant="body" style={styles.subtitle}>
+            {t('onboarding.birthYear.subtitle')}
+          </ShhText>
+
+          {/* Year display */}
+          <ShhText
+            variant="display"
+            style={[
+              styles.yearDisplay,
+              isBlocked && styles.yearDisplayBlocked,
+            ]}
+          >
+            {year}
+          </ShhText>
+
+          {/* Hint */}
+          <ShhText variant="body" style={styles.hint}>
+            {'\u2191 \u2193'} {t('onboarding.birthYear.hint', { defaultValue: 'pour changer' })}
+          </ShhText>
+
+          {/* Arrow buttons */}
+          <View style={styles.arrowRow}>
+            <TouchableOpacity
+              style={styles.arrowButton}
+              onPress={decrementYear}
+              activeOpacity={0.7}
+            >
+              <ShhText variant="display" style={styles.arrowText}>
+                {'\u25BC'}
+              </ShhText>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.arrowButton}
+              onPress={incrementYear}
+              activeOpacity={0.7}
+            >
+              <ShhText variant="display" style={styles.arrowText}>
+                {'\u25B2'}
+              </ShhText>
+            </TouchableOpacity>
+          </View>
+
+          {/* Block message */}
+          {isBlocked && (
+            <View style={styles.blockBanner}>
+              <ShhText variant="body" style={styles.blockText}>
+                {t('onboarding.birthYear.blocked')}
+              </ShhText>
+            </View>
+          )}
+        </View>
+
+        {/* CTA */}
+        <TouchableOpacity
+          style={[
+            styles.ctaButton,
+            isBlocked && styles.ctaButtonDisabled,
+            isSubmitting && styles.ctaButtonDisabled,
+          ]}
+          onPress={handleConfirm}
+          disabled={isBlocked || isSubmitting}
+          activeOpacity={0.8}
+        >
+          <ShhText variant="body" style={styles.ctaText}>
+            {isBlocked
+              ? `\u26D4 ${t('onboarding.birthYear.accessDenied', { defaultValue: 'Acc\u00e8s refus\u00e9' })}`
+              : `${t('onboarding.birthYear.confirm')} \u2192`}
+          </ShhText>
+        </TouchableOpacity>
+      </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#111111',
+  },
   container: {
     flex: 1,
-    backgroundColor: colors.dark,
-    paddingTop: spacing['3xl'],
+    backgroundColor: '#111111',
+    paddingHorizontal: 24,
+    paddingBottom: 32,
   },
-  header: {
-    paddingHorizontal: spacing.xl,
-    marginBottom: spacing.lg,
-  },
-  title: {
-    fontSize: 28,
-    color: colors.textDark,
-  },
-  subtitle: {
-    fontSize: 14,
-    color: colors.gray,
-    marginTop: spacing.xs,
-  },
-  listContent: {
-    paddingHorizontal: spacing.xl,
-    paddingBottom: 100,
-  },
-  yearItem: {
-    paddingVertical: spacing.md,
+  backButton: {
+    width: 38,
+    height: 38,
     borderRadius: 12,
-    marginVertical: 2,
-    paddingHorizontal: spacing.base,
-  },
-  yearItemSelected: {
-    backgroundColor: colors.primary,
-  },
-  yearText: {
-    fontSize: 22,
-    color: colors.textDark,
-    textAlign: 'center',
-  },
-  yearTextSelected: {
-    color: colors.black,
-  },
-  confirmButton: {
-    position: 'absolute',
-    bottom: spacing['2xl'],
-    left: spacing.xl,
-    right: spacing.xl,
-    backgroundColor: colors.primary,
-    borderRadius: 16,
-    paddingVertical: spacing.base,
+    backgroundColor: '#1A1A1A',
+    borderWidth: 1,
+    borderColor: '#2A2A2A',
     alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 8,
   },
-  confirmDisabled: {
-    opacity: 0.5,
+  backText: {
+    fontSize: 18,
+    color: '#FFFFFF',
+    lineHeight: 22,
   },
-  confirmText: {
-    color: colors.black,
-    fontSize: 16,
-    fontWeight: '700',
-  },
-  blockedContent: {
+  body: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: spacing.xl,
   },
-  blockedEmoji: {
-    fontSize: 64,
-    marginBottom: spacing.lg,
-  },
-  blockedText: {
-    fontSize: 18,
-    color: colors.textDark,
+  title: {
+    fontSize: 28,
+    fontWeight: '800',
+    color: '#FFFFFF',
     textAlign: 'center',
-    lineHeight: 28,
+  },
+  subtitle: {
+    fontSize: 14,
+    color: '#444444',
+    textAlign: 'center',
+    marginTop: 8,
+    marginBottom: 44,
+    lineHeight: 20,
+  },
+  yearDisplay: {
+    fontSize: 80,
+    fontWeight: '800',
+    color: '#DCFB4E',
+    textAlign: 'center',
+  },
+  yearDisplayBlocked: {
+    color: '#ff453a',
+  },
+  hint: {
+    fontSize: 12,
+    color: '#333333',
+    textAlign: 'center',
+    marginTop: 4,
+    marginBottom: 28,
+  },
+  arrowRow: {
+    flexDirection: 'row',
+    gap: 28,
+  },
+  arrowButton: {
+    width: 56,
+    height: 56,
+    borderRadius: 16,
+    backgroundColor: '#1A1A1A',
+    borderWidth: 1,
+    borderColor: '#2A2A2A',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  arrowText: {
+    fontSize: 22,
+    color: '#FFFFFF',
+  },
+  blockBanner: {
+    marginTop: 28,
+    backgroundColor: 'rgba(255,69,58,0.08)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,69,58,0.2)',
+    borderRadius: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+  },
+  blockText: {
+    fontSize: 13,
+    color: '#ff453a',
+    textAlign: 'center',
+  },
+  ctaButton: {
+    backgroundColor: '#DCFB4E',
+    borderRadius: 14,
+    paddingVertical: 17,
+    alignItems: 'center',
+  },
+  ctaButtonDisabled: {
+    opacity: 0.3,
+  },
+  ctaText: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#000000',
   },
 });

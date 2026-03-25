@@ -1,16 +1,30 @@
 /**
- * AuthScreen — Apple & Google sign-in buttons.
- * After login, navigates to BirthYearScreen (new user) or HomeScreen.
+ * AuthScreen — Immersive 2026 auth with breathing emoji,
+ * Apple / Google / Email sign-in, legal links.
  */
-import React, { useState } from 'react';
-import { View, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import {
+  View,
+  TouchableOpacity,
+  StyleSheet,
+  Alert,
+  Text,
+  Linking,
+  Platform,
+} from 'react-native';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withRepeat,
+  withTiming,
+  Easing,
+} from 'react-native-reanimated';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useTranslation } from 'react-i18next';
-import ShhText from '../../components/atoms/ShhText';
 import { useAuthStore } from '../../stores/useAuthStore';
 import { colors } from '../../theme/colors';
-import { spacing } from '../../theme/spacing';
+import { typography } from '../../theme/typography';
 import type { RootStackParamList } from '../../types';
 
 type Nav = NativeStackNavigationProp<RootStackParamList, 'Auth'>;
@@ -21,6 +35,21 @@ export default function AuthScreen() {
   const login = useAuthStore((s) => s.login);
   const isNewUser = useAuthStore((s) => s.isNewUser);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
+
+  // Breathing emoji animation (3s cycle)
+  const emojiScale = useSharedValue(1);
+
+  useEffect(() => {
+    emojiScale.value = withRepeat(
+      withTiming(1.08, { duration: 3000, easing: Easing.inOut(Easing.ease) }),
+      -1,
+      true,
+    );
+  }, [emojiScale]);
+
+  const emojiAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: emojiScale.value }],
+  }));
 
   const handleLogin = async (provider: 'apple' | 'google') => {
     if (isLoggingIn) return;
@@ -46,41 +75,95 @@ export default function AuthScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.logoSection}>
-        <ShhText variant="display" style={styles.logo}>
+      <View style={styles.content}>
+        {/* Breathing emoji */}
+        <Animated.Text style={[styles.emoji, emojiAnimatedStyle]}>
           {'\ud83e\udd2b'}
-        </ShhText>
-        <ShhText variant="display" style={styles.appName}>
-          Shh Me
-        </ShhText>
-      </View>
+        </Animated.Text>
 
-      <View style={styles.buttons}>
-        <TouchableOpacity
-          style={styles.button}
-          activeOpacity={0.8}
-          onPress={() => handleLogin('apple')}
-          disabled={isLoggingIn}
-          accessibilityLabel={t('auth.signInApple')}
-          accessibilityRole="button"
-        >
-          <ShhText variant="body" style={styles.buttonText}>
-            {t('auth.signInApple')}
-          </ShhText>
-        </TouchableOpacity>
+        {/* Title */}
+        <Text style={styles.title}>{t('auth.title')}</Text>
 
-        <TouchableOpacity
-          style={styles.button}
-          activeOpacity={0.8}
-          onPress={() => handleLogin('google')}
-          disabled={isLoggingIn}
-          accessibilityLabel={t('auth.signInGoogle')}
-          accessibilityRole="button"
-        >
-          <ShhText variant="body" style={styles.buttonText}>
-            {t('auth.signInGoogle')}
-          </ShhText>
-        </TouchableOpacity>
+        {/* Subtitle */}
+        <Text style={styles.subtitle}>{t('auth.subtitle')}</Text>
+
+        {/* Buttons */}
+        <View style={styles.buttons}>
+          {/* Apple button */}
+          {Platform.OS === 'ios' && (
+            <TouchableOpacity
+              style={styles.buttonApple}
+              activeOpacity={0.8}
+              onPress={() => handleLogin('apple')}
+              disabled={isLoggingIn}
+              accessibilityLabel={t('auth.signInApple')}
+              accessibilityRole="button"
+            >
+              <Text style={styles.buttonAppleIcon}>{'\uF8FF'}</Text>
+              <Text style={styles.buttonAppleText}>{t('auth.signInApple')}</Text>
+            </TouchableOpacity>
+          )}
+
+          {/* Google button */}
+          <TouchableOpacity
+            style={styles.buttonGoogle}
+            activeOpacity={0.8}
+            onPress={() => handleLogin('google')}
+            disabled={isLoggingIn}
+            accessibilityLabel={t('auth.signInGoogle')}
+            accessibilityRole="button"
+          >
+            <Text style={styles.buttonGoogleIcon}>G</Text>
+            <Text style={styles.buttonGoogleText}>{t('auth.signInGoogle')}</Text>
+          </TouchableOpacity>
+
+          {/* Email button */}
+          <TouchableOpacity
+            style={styles.buttonEmail}
+            activeOpacity={0.8}
+            onPress={() => {
+              // TODO: Navigate to email auth screen
+            }}
+            disabled={isLoggingIn}
+            accessibilityLabel={t('auth.signInEmail')}
+            accessibilityRole="button"
+          >
+            <Text style={styles.buttonEmailText}>{t('auth.signInEmail')}</Text>
+          </TouchableOpacity>
+
+          {/* Demo mode (__DEV__ only) */}
+          {__DEV__ && (
+            <TouchableOpacity
+              style={styles.buttonDemo}
+              activeOpacity={0.8}
+              onPress={() => {
+                useAuthStore.getState().setToken('demo-token');
+                useAuthStore.getState().setIsNewUser(true);
+                navigation.reset({ index: 0, routes: [{ name: 'BirthYear' }] });
+              }}
+            >
+              <Text style={styles.buttonDemoText}>Demo Mode</Text>
+            </TouchableOpacity>
+          )}
+        </View>
+
+        {/* Legal text */}
+        <Text style={styles.legal}>
+          {t('auth.legal')}
+          <Text
+            style={styles.legalLink}
+            onPress={() => Linking.openURL('https://shhme.app/terms')}
+          >
+            {t('auth.terms')}
+          </Text>
+          {t('auth.and')}
+          <Text
+            style={styles.legalLink}
+            onPress={() => Linking.openURL('https://shhme.app/privacy')}
+          >
+            {t('auth.privacy')}
+          </Text>
+        </Text>
       </View>
     </View>
   );
@@ -89,37 +172,115 @@ export default function AuthScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.dark,
+    backgroundColor: '#111111',
     justifyContent: 'center',
-    paddingHorizontal: spacing.xl,
+    paddingHorizontal: 28,
   },
-  logoSection: {
+  content: {
     alignItems: 'center',
-    marginBottom: spacing['3xl'],
   },
-  logo: {
-    fontSize: 64,
-    color: colors.primary,
+  emoji: {
+    fontSize: 56,
+    marginBottom: 20,
   },
-  appName: {
-    fontSize: 32,
-    color: colors.primary,
-    marginTop: spacing.sm,
+  title: {
+    ...typography.displayExtra,
+    fontSize: 34,
+    color: colors.white,
+    textAlign: 'center',
+    marginBottom: 10,
+  },
+  subtitle: {
+    ...typography.body,
+    fontSize: 14,
+    color: '#444444',
+    textAlign: 'center',
+    lineHeight: 22.4, // 14 * 1.6
+    marginBottom: 36,
   },
   buttons: {
-    gap: spacing.base,
+    width: '100%',
+    gap: 10,
   },
-  button: {
-    backgroundColor: colors.black,
-    borderRadius: 16,
-    paddingVertical: spacing.base,
+  // Apple button — white bg, black text
+  buttonApple: {
+    flexDirection: 'row',
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: colors.borderDark,
+    justifyContent: 'center',
+    backgroundColor: colors.white,
+    borderRadius: 14,
+    paddingVertical: 17,
+    gap: 10,
   },
-  buttonText: {
-    color: colors.primary,
-    fontSize: 16,
-    fontWeight: '600',
+  buttonAppleIcon: {
+    fontSize: 18,
+    color: colors.black,
+  },
+  buttonAppleText: {
+    ...typography.bodyBold,
+    fontSize: 15,
+    color: colors.black,
+  },
+  // Google button — #DCFB4E bg, black text
+  buttonGoogle: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.primary,
+    borderRadius: 14,
+    paddingVertical: 17,
+    gap: 10,
+  },
+  buttonGoogleIcon: {
+    ...typography.bodyBold,
+    fontSize: 18,
+    color: colors.black,
+  },
+  buttonGoogleText: {
+    ...typography.bodyBold,
+    fontSize: 15,
+    color: colors.black,
+  },
+  // Email button — transparent bg, border #222
+  buttonEmail: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'transparent',
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: '#222222',
+    paddingVertical: 15,
+  },
+  buttonEmailText: {
+    ...typography.body,
+    fontSize: 14,
+    color: '#444444',
+  },
+  // Demo button
+  buttonDemo: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.primary,
+    borderRadius: 14,
+    paddingVertical: 15,
+    marginTop: 4,
+  },
+  buttonDemoText: {
+    ...typography.bodyBold,
+    fontSize: 14,
+    color: colors.black,
+  },
+  // Legal
+  legal: {
+    ...typography.body,
+    fontSize: 11,
+    color: '#2a2a2a',
+    textAlign: 'center',
+    marginTop: 20,
+    lineHeight: 16,
+  },
+  legalLink: {
+    textDecorationLine: 'underline',
+    color: '#2a2a2a',
   },
 });

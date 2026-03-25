@@ -2,13 +2,22 @@
   "app": {
     "name": "Shh Me"
   },
+  "splash": {
+    "tagline": "Quelqu'un bat pour toi"
+  },
   "auth": {
     "signInApple": "Continuer avec Apple",
     "signInGoogle": "Continuer avec Google",
     "signInEmail": "Continuer avec Email",
     "emailPlaceholder": "Ton email",
     "otpSent": "Code envoy\u00e9 \u00e0 ton email",
-    "otpPlaceholder": "Entre le code"
+    "otpPlaceholder": "Entre le code",
+    "title": "Quelqu'un pense \u00e0 toi.",
+    "subtitle": "Envoie un secret anonyme.\nLaisse la photo te trahir, doucement.",
+    "legal": "En continuant, tu acceptes nos ",
+    "terms": "Conditions",
+    "and": " et ",
+    "privacy": "Confidentialit\u00e9"
   },
   "onboarding": {
     "birthYear": {

@@ -1,66 +1,138 @@
 /**
- * SettingsScreen — User preferences and account actions.
- * Notifications, Language, Ghost mode, Help, Legal links,
- * Blocked users, Delete account, Logout, Panic button.
+ * SettingsScreen — Immersive 2026 settings with yellow bg.
+ * Sections with custom toggles, danger zone, panic exit.
  */
 import React, { useState } from 'react';
 import {
   View,
   ScrollView,
-  Switch,
   TouchableOpacity,
   Alert,
   Linking,
   StyleSheet,
 } from 'react-native';
+import Animated, {
+  useAnimatedStyle,
+  withTiming,
+  interpolateColor,
+} from 'react-native-reanimated';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useTranslation } from 'react-i18next';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import ShhText from '../../components/atoms/ShhText';
 import { useAuthStore } from '../../stores/useAuthStore';
 import { useSettingsStore } from '../../stores/useSettingsStore';
 import { apiRequest } from '../../services/api';
-import { colors } from '../../theme/colors';
-import { spacing } from '../../theme/spacing';
 import type { RootStackParamList } from '../../types';
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 
 const PRIVACY_URL = 'https://shh-me.com/privacy';
 const TERMS_URL = 'https://shh-me.com/terms';
-const GUIDELINES_URL = 'https://shh-me.com/guidelines';
 
 const SUPPORTED_LOCALES = ['en', 'fr'] as const;
 const LOCALE_LABELS: Record<string, string> = { en: 'English', fr: 'Fran\u00e7ais' };
 
-interface SettingRowProps {
-  label: string;
-  onPress?: () => void;
-  right?: React.ReactNode;
-  destructive?: boolean;
-  accessibilityLabel?: string;
-}
+/* ─── Custom Toggle ─── */
+function ShhToggle({ value, onValueChange }: { value: boolean; onValueChange: (v: boolean) => void }) {
+  const animValue = React.useRef(value ? 1 : 0);
 
-function SettingRow({ label, onPress, right, destructive, accessibilityLabel }: SettingRowProps) {
+  // Simple approach without shared values for the toggle track
   return (
     <TouchableOpacity
-      style={styles.row}
+      style={[styles.toggleTrack, value ? styles.toggleTrackOn : styles.toggleTrackOff]}
+      onPress={() => onValueChange(!value)}
+      activeOpacity={0.8}
+      accessibilityRole="switch"
+      accessibilityState={{ checked: value }}
+    >
+      <View style={[styles.toggleThumb, value ? styles.toggleThumbOn : styles.toggleThumbOff]} />
+    </TouchableOpacity>
+  );
+}
+
+/* ─── Section Label ─── */
+function SectionLabel({ text }: { text: string }) {
+  return (
+    <ShhText variant="body" style={styles.sectionLabel}>{text}</ShhText>
+  );
+}
+
+/* ─── Setting Item ─── */
+interface SettingItemProps {
+  icon: string;
+  label: string;
+  subtitle?: string;
+  onPress?: () => void;
+  right?: React.ReactNode;
+  isFirst?: boolean;
+  isLast?: boolean;
+}
+
+function SettingItem({ icon, label, subtitle, onPress, right, isFirst, isLast }: SettingItemProps) {
+  return (
+    <TouchableOpacity
+      style={[
+        styles.item,
+        isFirst && styles.itemFirst,
+        isLast && styles.itemLast,
+        !isFirst && !isLast && styles.itemMiddle,
+      ]}
       onPress={onPress}
       activeOpacity={onPress ? 0.7 : 1}
-      disabled={!onPress}
-      accessibilityLabel={accessibilityLabel || label}
+      disabled={!onPress && !right}
+      accessibilityLabel={label}
       accessibilityRole="button"
     >
-      <ShhText
-        variant="body"
-        style={[
-          styles.rowLabel,
-          destructive && styles.destructiveLabel,
-        ]}
-      >
-        {label}
-      </ShhText>
-      {right}
+      <View style={styles.itemLeft}>
+        <ShhText variant="body" style={styles.itemIcon}>{icon}</ShhText>
+        <View style={styles.itemTextContainer}>
+          <ShhText variant="body" style={styles.itemLabel}>{label}</ShhText>
+          {subtitle && (
+            <ShhText variant="body" style={styles.itemSubtitle}>{subtitle}</ShhText>
+          )}
+        </View>
+      </View>
+      {right ?? (onPress && <ShhText variant="body" style={styles.itemArrow}>{'›'}</ShhText>)}
+    </TouchableOpacity>
+  );
+}
+
+/* ─── Danger Item ─── */
+interface DangerItemProps {
+  icon: string;
+  label: string;
+  subtitle?: string;
+  onPress: () => void;
+  isFirst?: boolean;
+  isLast?: boolean;
+}
+
+function DangerItem({ icon, label, subtitle, onPress, isFirst, isLast }: DangerItemProps) {
+  return (
+    <TouchableOpacity
+      style={[
+        styles.dangerItem,
+        isFirst && styles.itemFirst,
+        isLast && styles.itemLast,
+        !isFirst && !isLast && styles.itemMiddle,
+      ]}
+      onPress={onPress}
+      activeOpacity={0.7}
+      accessibilityLabel={label}
+      accessibilityRole="button"
+    >
+      <View style={styles.itemLeft}>
+        <ShhText variant="body" style={styles.dangerIcon}>{icon}</ShhText>
+        <View style={styles.itemTextContainer}>
+          <ShhText variant="body" style={styles.dangerLabel}>{label}</ShhText>
+          {subtitle && (
+            <ShhText variant="body" style={styles.dangerSubtitle}>{subtitle}</ShhText>
+          )}
+        </View>
+      </View>
+      <ShhText variant="body" style={styles.dangerArrow}>{'›'}</ShhText>
     </TouchableOpacity>
   );
 }
@@ -79,6 +151,9 @@ export default function SettingsScreen() {
   } = useSettingsStore();
 
   const [ghostEnabled, setGhostEnabled] = useState(false);
+  const [newShhNotif, setNewShhNotif] = useState(true);
+  const [messageNotif, setMessageNotif] = useState(true);
+  const [guessNotif, setGuessNotif] = useState(true);
 
   const handleToggleNotifications = (value: boolean) => {
     setNotificationsEnabled(value);
@@ -168,149 +243,295 @@ export default function SettingsScreen() {
   };
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <ShhText variant="display" style={styles.title}>
-        {t('settings.title')}
-      </ShhText>
-
-      <View style={styles.section}>
-        <SettingRow
-          label={t('settings.notifications')}
-          right={
-            <Switch
-              value={notificationsEnabled}
-              onValueChange={handleToggleNotifications}
-              trackColor={{ true: colors.primary, false: colors.borderDark }}
-              thumbColor={colors.white}
-            />
-          }
-        />
-
-        <SettingRow
-          label={`${t('settings.language')}: ${LOCALE_LABELS[locale] || locale.toUpperCase()}`}
-          onPress={handleToggleLanguage}
-          accessibilityLabel={`${t('settings.language')}: ${LOCALE_LABELS[locale] || locale.toUpperCase()}`}
-        />
-
-        <SettingRow
-          label={t('settings.ghost')}
-          right={
-            <Switch
-              value={ghostEnabled}
-              onValueChange={handleToggleGhost}
-              trackColor={{ true: colors.primary, false: colors.borderDark }}
-              thumbColor={colors.white}
-            />
-          }
-        />
-      </View>
-
-      <View style={styles.section}>
-        <SettingRow
-          label={t('settings.helpFeedback')}
-          onPress={() => Linking.openURL('mailto:help@shh-me.com')}
-        />
-        <SettingRow
-          label={t('settings.privacyPolicy')}
-          onPress={() => Linking.openURL(PRIVACY_URL)}
-        />
-        <SettingRow
-          label={t('settings.terms')}
-          onPress={() => Linking.openURL(TERMS_URL)}
-        />
-        <SettingRow
-          label={t('settings.communityGuidelines')}
-          onPress={() => Linking.openURL(GUIDELINES_URL)}
-        />
-      </View>
-
-      <View style={styles.section}>
-        <SettingRow
-          label={t('settings.blocked')}
-          onPress={() => {
-            /* Navigate to blocked list */
-          }}
-        />
-      </View>
-
-      <View style={styles.section}>
-        <SettingRow
-          label={t('settings.deleteAccount')}
-          onPress={handleDeleteAccount}
-          destructive
-        />
-        <SettingRow
-          label={t('settings.logout')}
-          onPress={handleLogout}
-        />
-      </View>
-
-      <View style={styles.panicSection}>
+    <SafeAreaView style={styles.safeArea} edges={['top']}>
+      {/* ─── Header ─── */}
+      <View style={styles.header}>
         <TouchableOpacity
-          style={styles.panicButton}
-          onPress={handlePanic}
-          activeOpacity={0.8}
-          accessibilityLabel={t('settings.panic')}
-          accessibilityRole="button"
+          style={styles.backButton}
+          onPress={() => navigation.goBack()}
+          activeOpacity={0.7}
         >
-          <ShhText variant="body" style={styles.panicText}>
-            {t('settings.panic')}
-          </ShhText>
+          <ShhText variant="body" style={styles.backArrow}>{'‹'}</ShhText>
         </TouchableOpacity>
+        <ShhText variant="display" style={styles.headerTitle}>
+          {t('settings.title')}
+        </ShhText>
+        <View style={{ width: 40 }} />
       </View>
-    </ScrollView>
+
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* ─── Notifications ─── */}
+        <SectionLabel text={t('settings.notificationsSection', { defaultValue: 'NOTIFICATIONS' })} />
+        <View style={styles.sectionGroup}>
+          <SettingItem
+            icon="🔔"
+            label={t('settings.notifications')}
+            isFirst
+            right={<ShhToggle value={notificationsEnabled} onValueChange={handleToggleNotifications} />}
+          />
+          <SettingItem
+            icon="🤫"
+            label={t('settings.newShhNotif', { defaultValue: 'Nouveau shh reçu' })}
+            right={<ShhToggle value={newShhNotif} onValueChange={setNewShhNotif} />}
+          />
+          <SettingItem
+            icon="💬"
+            label={t('settings.messageNotif', { defaultValue: 'Messages' })}
+            right={<ShhToggle value={messageNotif} onValueChange={setMessageNotif} />}
+          />
+          <SettingItem
+            icon="🎯"
+            label={t('settings.guessNotif', { defaultValue: 'Tentatives de devinette' })}
+            isLast
+            right={<ShhToggle value={guessNotif} onValueChange={setGuessNotif} />}
+          />
+        </View>
+
+        {/* ─── Confidentialité ─── */}
+        <SectionLabel text={t('settings.privacySection', { defaultValue: 'CONFIDENTIALITÉ' })} />
+        <View style={styles.sectionGroup}>
+          <SettingItem
+            icon="👻"
+            label={t('settings.ghost')}
+            subtitle={t('settings.ghostSubtitle', { defaultValue: 'Masque ta présence en ligne' })}
+            isFirst
+            right={<ShhToggle value={ghostEnabled} onValueChange={handleToggleGhost} />}
+          />
+          <SettingItem
+            icon="🚫"
+            label={t('settings.blocked')}
+            onPress={() => { /* Navigate to blocked list */ }}
+            isLast
+          />
+        </View>
+
+        {/* ─── Langue ─── */}
+        <SectionLabel text={t('settings.languageSection', { defaultValue: 'LANGUE' })} />
+        <View style={styles.sectionGroup}>
+          <SettingItem
+            icon="🌍"
+            label={`${t('settings.language')}: ${LOCALE_LABELS[locale] || locale.toUpperCase()}`}
+            onPress={handleToggleLanguage}
+            isFirst
+            isLast
+          />
+        </View>
+
+        {/* ─── Support ─── */}
+        <SectionLabel text={t('settings.supportSection', { defaultValue: 'SUPPORT' })} />
+        <View style={styles.sectionGroup}>
+          <SettingItem
+            icon="❓"
+            label={t('settings.helpFeedback')}
+            onPress={() => Linking.openURL('mailto:help@shh-me.com')}
+            isFirst
+          />
+          <SettingItem
+            icon="📜"
+            label={t('settings.terms')}
+            onPress={() => Linking.openURL(TERMS_URL)}
+            isLast
+          />
+        </View>
+
+        {/* ─── Danger Zone ─── */}
+        <SectionLabel text={t('settings.dangerSection', { defaultValue: 'ZONE DANGER' })} />
+        <View style={styles.sectionGroup}>
+          <DangerItem
+            icon="🚨"
+            label={t('settings.panic')}
+            subtitle={t('settings.panicSubtitle', { defaultValue: 'Supprime tout et déconnecte immédiatement' })}
+            onPress={handlePanic}
+            isFirst
+          />
+          <DangerItem
+            icon="🚪"
+            label={t('settings.logout')}
+            subtitle={t('settings.logoutSubtitle', { defaultValue: 'Tu pourras te reconnecter plus tard' })}
+            onPress={handleLogout}
+          />
+          <DangerItem
+            icon="💀"
+            label={t('settings.deleteAccount')}
+            subtitle={t('settings.deleteSubtitle', { defaultValue: 'Irréversible — toutes les données seront supprimées' })}
+            onPress={handleDeleteAccount}
+            isLast
+          />
+        </View>
+
+        <View style={{ height: 100 }} />
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  safeArea: {
     flex: 1,
-    backgroundColor: colors.dark,
+    backgroundColor: '#DCFB4E',
   },
-  content: {
-    paddingTop: spacing['3xl'],
-    paddingBottom: spacing['3xl'],
-  },
-  title: {
-    fontSize: 28,
-    color: colors.textDark,
-    paddingHorizontal: spacing.xl,
-    marginBottom: spacing.lg,
-  },
-  section: {
-    marginBottom: spacing.lg,
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: colors.borderDark,
-  },
-  row: {
+
+  /* ─── Header ─── */
+  header: {
     flexDirection: 'row',
+    alignItems: 'center',
     justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+  },
+  backButton: {
+    width: 40,
+    height: 40,
+    backgroundColor: 'rgba(0,0,0,0.1)',
+    borderRadius: 12,
     alignItems: 'center',
-    paddingHorizontal: spacing.xl,
-    paddingVertical: spacing.base,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: colors.borderDark,
+    justifyContent: 'center',
   },
-  rowLabel: {
-    fontSize: 16,
-    color: colors.textDark,
+  backArrow: {
+    fontSize: 22,
+    color: '#000000',
+    marginTop: -2,
   },
-  destructiveLabel: {
-    color: colors.error,
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: '800',
+    color: '#000000',
   },
-  panicSection: {
-    paddingHorizontal: spacing.xl,
-    marginTop: spacing.lg,
+
+  /* ─── Scroll ─── */
+  scrollView: {
+    flex: 1,
   },
-  panicButton: {
-    backgroundColor: colors.error,
-    borderRadius: 16,
-    paddingVertical: spacing.base,
-    alignItems: 'center',
+  scrollContent: {
+    paddingHorizontal: 16,
+    paddingTop: 8,
+    paddingBottom: 40,
   },
-  panicText: {
-    color: colors.white,
-    fontSize: 16,
+
+  /* ─── Section labels ─── */
+  sectionLabel: {
+    fontSize: 10,
     fontWeight: '700',
+    textTransform: 'uppercase',
+    letterSpacing: 1.5,
+    color: 'rgba(0,0,0,0.3)',
+    marginBottom: 8,
+    marginTop: 24,
+    marginLeft: 4,
+  },
+  sectionGroup: {
+    overflow: 'hidden',
+  },
+
+  /* ─── Items ─── */
+  item: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: 'rgba(0,0,0,0.09)',
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    marginBottom: 1,
+  },
+  itemFirst: {
+    borderTopLeftRadius: 12,
+    borderTopRightRadius: 12,
+  },
+  itemLast: {
+    borderBottomLeftRadius: 12,
+    borderBottomRightRadius: 12,
+    marginBottom: 0,
+  },
+  itemMiddle: {},
+  itemLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  itemIcon: {
+    fontSize: 18,
+    marginRight: 12,
+  },
+  itemTextContainer: {
+    flex: 1,
+  },
+  itemLabel: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#000000',
+  },
+  itemSubtitle: {
+    fontSize: 11,
+    color: '#555555',
+    marginTop: 2,
+  },
+  itemArrow: {
+    fontSize: 18,
+    color: 'rgba(0,0,0,0.25)',
+    marginLeft: 8,
+  },
+
+  /* ─── Toggle ─── */
+  toggleTrack: {
+    width: 46,
+    height: 28,
+    borderRadius: 14,
+    justifyContent: 'center',
+    paddingHorizontal: 3,
+  },
+  toggleTrackOn: {
+    backgroundColor: '#000000',
+    alignItems: 'flex-end',
+  },
+  toggleTrackOff: {
+    backgroundColor: 'rgba(0,0,0,0.15)',
+    alignItems: 'flex-start',
+  },
+  toggleThumb: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+  },
+  toggleThumbOn: {
+    backgroundColor: '#DCFB4E',
+  },
+  toggleThumbOff: {
+    backgroundColor: '#999999',
+  },
+
+  /* ─── Danger items ─── */
+  dangerItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: 'rgba(255,69,58,0.06)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,69,58,0.15)',
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    marginBottom: 1,
+  },
+  dangerIcon: {
+    fontSize: 18,
+    marginRight: 12,
+  },
+  dangerLabel: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#ff453a',
+  },
+  dangerSubtitle: {
+    fontSize: 11,
+    color: 'rgba(255,69,58,0.6)',
+    marginTop: 2,
+  },
+  dangerArrow: {
+    fontSize: 18,
+    color: 'rgba(255,69,58,0.4)',
+    marginLeft: 8,
   },
 });
