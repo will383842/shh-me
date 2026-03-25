@@ -141,6 +141,7 @@ return [
     'community_counter_min_threshold' => 10,
     'community_counter_levels' => ['city', 'region', 'country', 'global'],
     'community_counter_cache_ttl' => 60,
+    'community_counter_recalc_cron' => '0 * * * *',
 
     /*
     |--------------------------------------------------------------------------
