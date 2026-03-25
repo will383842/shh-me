@@ -6,26 +6,30 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function getConnection(): string
+    public function getConnection(): ?string
     {
-        return 'vault';
+        return app()->environment('testing') ? null : 'vault';
     }
 
     public function up(): void
     {
-        Schema::connection('vault')->create('vault_shh_links', function (Blueprint $table) {
+        $connection = $this->getConnection();
+
+        Schema::connection($connection)->create('vault_shh_links', function (Blueprint $table) {
             $table->ulid('id')->primary();
             $table->binary('sender_encrypted');
             $table->binary('receiver_encrypted');
             $table->binary('salt');
-            $table->enum('status', ['active', 'expired', 'revealed'])->default('active');
+            $table->string('status', 20)->default('active');
             $table->smallInteger('harassment_counter')->default(0);
-            $table->timestamp('created_at');
+            $table->timestamp('created_at')->nullable();
         });
     }
 
     public function down(): void
     {
-        Schema::connection('vault')->dropIfExists('vault_shh_links');
+        $connection = $this->getConnection();
+
+        Schema::connection($connection)->dropIfExists('vault_shh_links');
     }
 };

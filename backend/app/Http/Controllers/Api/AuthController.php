@@ -107,7 +107,13 @@ class AuthController extends Controller
     {
         /** @var User $user */
         $user = $request->user();
-        $user->currentAccessToken()->delete();
+        $accessToken = $user->currentAccessToken();
+
+        if ($accessToken) { /** @phpstan-ignore if.alwaysTrue (actingAs in tests has no token) */
+            $accessToken->delete();
+        } else {
+            $user->tokens()->delete();
+        }
 
         return response()->json(['message' => 'Shh... tu es parti(e) en silence.'], 200);
     }
