@@ -1,0 +1,99 @@
+{
+  "app": {
+    "name": "Shh Me"
+  },
+  "auth": {
+    "signInApple": "Continue with Apple",
+    "signInGoogle": "Continue with Google",
+    "signInEmail": "Continue with Email",
+    "emailPlaceholder": "Your email",
+    "otpSent": "Code sent to your email",
+    "otpPlaceholder": "Enter code"
+  },
+  "onboarding": {
+    "birthYear": {
+      "title": "When were you born?",
+      "subtitle": "Shh Me is for 18+ only",
+      "blocked": "Shh Me is reserved for 18 and over. See you soon \ud83e\udd2b"
+    }
+  },
+  "home": {
+    "empty": {
+      "title": "Your story begins.",
+      "subtitle": "Someone will dare. \ud83e\udd2b"
+    },
+    "shhCount_one": "{{count}} secret",
+    "shhCount_other": "{{count}} secrets"
+  },
+  "shh": {
+    "send": {
+      "holdToSend": "Hold 3 seconds to send",
+      "firstWord": "One word for them.",
+      "firstWordPlaceholder": "One word...",
+      "sent": "Your shh has been sent \ud83e\udd2b"
+    },
+    "expiration": {
+      "breathing": "This heartbeat is still breathing\u2026",
+      "weakening": "The heartbeat is fading\u2026",
+      "lastMoments": "Last moments\u2026",
+      "existed": "This heartbeat existed."
+    },
+    "message": {
+      "placeholder": "Write a secret thought...",
+      "maxLength": "{{count}}/200"
+    }
+  },
+  "audio": {
+    "record": "Hold to record",
+    "recording": "Recording...",
+    "preview": "Listen before sending",
+    "send": "Send voice"
+  },
+  "clue": {
+    "morning": "A question for your secret... \ud83e\udd2b",
+    "afternoon": "A clue just arrived... \ud83e\udd2b",
+    "anticipation": "Your clue arrives between 12pm and 3pm. Get ready. \ud83e\udd2b"
+  },
+  "reveal": {
+    "request": "Reveal",
+    "cancel": "Cancel",
+    "countdown": "Revealing in {{seconds}}s...",
+    "connected": "\ud83e\udd2b Connected",
+    "sendAnother": "Send a shh to someone else \ud83e\udd2b"
+  },
+  "notification": {
+    "shhReceived": "Someone has a secret about you \ud83e\udd2b",
+    "newMessage": "A secret thought is waiting for you \ud83e\udd2b",
+    "audioReceived": "You received a mysterious voice \ud83e\udd2b",
+    "photoUnblurred": "Your secret admirer's photo is clearer\u2026 \ud83e\udd2b",
+    "revealReady": "The reveal is ready. Do you dare? \ud83e\udd2b"
+  },
+  "settings": {
+    "title": "Settings",
+    "notifications": "Notifications",
+    "language": "Language",
+    "blocked": "Blocked users",
+    "deleteAccount": "Delete my account",
+    "deleteConfirm": "This action is irreversible. All your data will be deleted.",
+    "logout": "Log out"
+  },
+  "profile": {
+    "shhLifetime": "Shhs lifetime"
+  },
+  "community": {
+    "counter": "{{count}} people near you are using Shh Me \ud83e\udd2b"
+  },
+  "offline": {
+    "pending": "Your shh will be sent when you're back online \ud83e\udd2b"
+  },
+  "error": {
+    "generic": "Something didn't work. Try again \ud83e\udd2b",
+    "network": "No connection. Don't worry, we'll sync when you're back \ud83e\udd2b"
+  },
+  "ghost": {
+    "push": "People near you sent a shh tonight \ud83e\udd2b"
+  },
+  "relance": {
+    "gentle": "Something sweet is waiting for you whenever you want. No rush. \ud83e\udd2b"
+  }
+}

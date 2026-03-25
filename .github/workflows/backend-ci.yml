@@ -1,0 +1,81 @@
+name: Backend CI
+
+on:
+  push:
+    branches: [main, 'feat/**', 'fix/**']
+    paths: ['backend/**']
+  pull_request:
+    branches: [main]
+    paths: ['backend/**']
+
+jobs:
+  lint:
+    name: Pint (formatting)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+      - run: cd backend && composer install --no-interaction --prefer-dist
+      - run: cd backend && vendor/bin/pint --test
+
+  static-analysis:
+    name: PHPStan (level 6)
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+      - run: cd backend && composer install --no-interaction --prefer-dist
+      - run: cd backend && vendor/bin/phpstan analyse --level=6
+
+  tests:
+    name: Pest (tests)
+    runs-on: ubuntu-latest
+    needs: static-analysis
+    services:
+      postgres:
+        image: postgis/postgis:16-3.4
+        env:
+          POSTGRES_DB: shhme_test
+          POSTGRES_USER: shhme
+          POSTGRES_PASSWORD: testing
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis:7-alpine
+        ports: ['6379:6379']
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: pdo_pgsql, redis
+          coverage: xdebug
+      - run: cd backend && composer install --no-interaction --prefer-dist
+      - run: cd backend && cp .env.example .env && php artisan key:generate
+      - name: Run Pest
+        run: cd backend && vendor/bin/pest --parallel
+        env:
+          DB_CONNECTION: pgsql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 5432
+          DB_DATABASE: shhme_test
+          DB_USERNAME: shhme
+          DB_PASSWORD: testing
+          REDIS_CACHE_HOST: 127.0.0.1
+          REDIS_CACHE_PORT: 6379
+          REDIS_PERSISTENT_HOST: 127.0.0.1
+          REDIS_PERSISTENT_PORT: 6379

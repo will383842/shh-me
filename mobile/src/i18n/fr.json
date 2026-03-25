@@ -1,0 +1,99 @@
+{
+  "app": {
+    "name": "Shh Me"
+  },
+  "auth": {
+    "signInApple": "Continuer avec Apple",
+    "signInGoogle": "Continuer avec Google",
+    "signInEmail": "Continuer avec Email",
+    "emailPlaceholder": "Ton email",
+    "otpSent": "Code envoy\u00e9 \u00e0 ton email",
+    "otpPlaceholder": "Entre le code"
+  },
+  "onboarding": {
+    "birthYear": {
+      "title": "Quelle est ton ann\u00e9e de naissance ?",
+      "subtitle": "Shh Me est r\u00e9serv\u00e9 aux 18 ans et plus",
+      "blocked": "Shh Me est r\u00e9serv\u00e9 aux 18 ans et plus. On se retrouve bient\u00f4t \ud83e\udd2b"
+    }
+  },
+  "home": {
+    "empty": {
+      "title": "Ton histoire commence.",
+      "subtitle": "Quelqu'un va oser. \ud83e\udd2b"
+    },
+    "shhCount_one": "{{count}} secret",
+    "shhCount_other": "{{count}} secrets"
+  },
+  "shh": {
+    "send": {
+      "holdToSend": "Maintiens 3 secondes pour envoyer",
+      "firstWord": "Un seul mot pour cette personne.",
+      "firstWordPlaceholder": "Un mot...",
+      "sent": "Ton shh a \u00e9t\u00e9 envoy\u00e9 \ud83e\udd2b"
+    },
+    "expiration": {
+      "breathing": "Ce battement respire encore\u2026",
+      "weakening": "Le battement s\u2019affaiblit\u2026",
+      "lastMoments": "Derniers instants\u2026",
+      "existed": "Ce battement a exist\u00e9."
+    },
+    "message": {
+      "placeholder": "\u00c9cris une pens\u00e9e secr\u00e8te...",
+      "maxLength": "{{count}}/200"
+    }
+  },
+  "audio": {
+    "record": "Maintiens pour enregistrer",
+    "recording": "Enregistrement...",
+    "preview": "\u00c9coute avant d\u2019envoyer",
+    "send": "Envoyer la voix"
+  },
+  "clue": {
+    "morning": "Une question pour ton secret... \ud83e\udd2b",
+    "afternoon": "Un indice vient d\u2019arriver... \ud83e\udd2b",
+    "anticipation": "Ton indice arrive entre 12h et 15h. Pr\u00e9pare-toi. \ud83e\udd2b"
+  },
+  "reveal": {
+    "request": "R\u00e9v\u00e9ler",
+    "cancel": "Annuler",
+    "countdown": "R\u00e9v\u00e9lation dans {{seconds}}s...",
+    "connected": "\ud83e\udd2b Connected",
+    "sendAnother": "Envoie un shh \u00e0 quelqu\u2019un d\u2019autre \ud83e\udd2b"
+  },
+  "notification": {
+    "shhReceived": "Quelqu\u2019un a un secret pour toi \ud83e\udd2b",
+    "newMessage": "Une pens\u00e9e secr\u00e8te t\u2019attend \ud83e\udd2b",
+    "audioReceived": "Tu as re\u00e7u une voix myst\u00e9rieuse \ud83e\udd2b",
+    "photoUnblurred": "La photo de ton admirateur secret est plus nette\u2026 \ud83e\udd2b",
+    "revealReady": "Le reveal est pr\u00eat. Tu oses ? \ud83e\udd2b"
+  },
+  "settings": {
+    "title": "Param\u00e8tres",
+    "notifications": "Notifications",
+    "language": "Langue",
+    "blocked": "Utilisateurs bloqu\u00e9s",
+    "deleteAccount": "Supprimer mon compte",
+    "deleteConfirm": "Cette action est irr\u00e9versible. Toutes tes donn\u00e9es seront supprim\u00e9es.",
+    "logout": "Se d\u00e9connecter"
+  },
+  "profile": {
+    "shhLifetime": "Shhs \u00e0 vie"
+  },
+  "community": {
+    "counter": "{{count}} personnes pr\u00e8s de toi utilisent Shh Me \ud83e\udd2b"
+  },
+  "offline": {
+    "pending": "Ton shh sera envoy\u00e9 d\u00e8s que tu auras du r\u00e9seau \ud83e\udd2b"
+  },
+  "error": {
+    "generic": "Quelque chose n\u2019a pas march\u00e9. R\u00e9essaie \ud83e\udd2b",
+    "network": "Pas de connexion. T\u2019inqui\u00e8te pas, on synchronise d\u00e8s ton retour \ud83e\udd2b"
+  },
+  "ghost": {
+    "push": "Des personnes de ton quartier ont envoy\u00e9 un shh ce soir \ud83e\udd2b"
+  },
+  "relance": {
+    "gentle": "Quelque chose de doux t\u2019attend quand tu voudras. Pas de rush. \ud83e\udd2b"
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "expo": {
+    "name": "Shh Me",
+    "slug": "shh-me",
+    "scheme": "shhme",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#DCFB4E"
+    },
+    "ios": {
+      "bundleIdentifier": "com.shhme.app",
+      "supportsTablet": false
+    },
+    "android": {
+      "package": "com.shhme.app",
+      "adaptiveIcon": {
+        "backgroundColor": "#DCFB4E"
+      }
+    },
+    "plugins": [
+      "expo-secure-store",
+      "expo-camera"
+    ]
+  }
+}

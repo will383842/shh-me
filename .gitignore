@@ -1,0 +1,61 @@
+# Dependencies
+/backend/vendor/
+/mobile/node_modules/
+
+# Environment
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Laravel
+/backend/storage/*.key
+/backend/storage/framework/cache/*
+/backend/storage/framework/sessions/*
+/backend/storage/framework/views/*
+/backend/bootstrap/cache/*
+
+# Expo / React Native
+/mobile/.expo/
+/mobile/dist/
+/mobile/ios/
+/mobile/android/
+/mobile/web-build/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Docker volumes
+pgdata/
+redisdata/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Build
+/backend/public/hot
+/backend/public/storage
+/backend/public/build/
+
+# PHPUnit / Pest
+.phpunit.result.cache
+.phpunit.cache/
+
+# Coverage
+coverage/
+.coverage
+
+# Temporary
+*.tmp
+/backend/storage/app/temp/*
+!backend/storage/app/temp/.gitkeep
