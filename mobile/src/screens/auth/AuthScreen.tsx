@@ -90,19 +90,17 @@ export default function AuthScreen() {
         {/* Buttons */}
         <View style={styles.buttons}>
           {/* Apple button */}
-          {Platform.OS === 'ios' && (
-            <TouchableOpacity
-              style={styles.buttonApple}
-              activeOpacity={0.8}
-              onPress={() => handleLogin('apple')}
-              disabled={isLoggingIn}
-              accessibilityLabel={t('auth.signInApple')}
-              accessibilityRole="button"
-            >
-              <Text style={styles.buttonAppleIcon}>{'\uF8FF'}</Text>
-              <Text style={styles.buttonAppleText}>{t('auth.signInApple')}</Text>
-            </TouchableOpacity>
-          )}
+          <TouchableOpacity
+            style={styles.buttonApple}
+            activeOpacity={0.8}
+            onPress={() => handleLogin('apple')}
+            disabled={isLoggingIn}
+            accessibilityLabel={t('auth.signInApple')}
+            accessibilityRole="button"
+          >
+            <Text style={styles.buttonAppleIcon}>{'\uD83C\uDF4E'}</Text>
+            <Text style={styles.buttonAppleText}>{t('auth.signInApple')}</Text>
+          </TouchableOpacity>
 
           {/* Google button */}
           <TouchableOpacity
@@ -131,19 +129,71 @@ export default function AuthScreen() {
             <Text style={styles.buttonEmailText}>{t('auth.signInEmail')}</Text>
           </TouchableOpacity>
 
-          {/* Demo mode (__DEV__ only) */}
+          {/* Demo mode (__DEV__ only) — full walkthrough */}
           {__DEV__ && (
-            <TouchableOpacity
-              style={styles.buttonDemo}
-              activeOpacity={0.8}
-              onPress={() => {
-                useAuthStore.getState().setToken('demo-token');
-                useAuthStore.getState().setIsNewUser(true);
-                navigation.reset({ index: 0, routes: [{ name: 'BirthYear' }] });
-              }}
-            >
-              <Text style={styles.buttonDemoText}>Demo Mode</Text>
-            </TouchableOpacity>
+            <>
+              <TouchableOpacity
+                style={styles.buttonDemo}
+                activeOpacity={0.8}
+                onPress={() => {
+                  useAuthStore.getState().setToken('demo-token');
+                  useAuthStore.getState().setIsNewUser(true);
+                  navigation.reset({ index: 0, routes: [{ name: 'BirthYear' }] });
+                }}
+              >
+                <Text style={styles.buttonDemoText}>
+                  {'🎭 Demo — Parcours complet (Onboarding → Home)'}
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.buttonDemo, { backgroundColor: '#1A1A1A', borderWidth: 1, borderColor: colors.primary }]}
+                activeOpacity={0.8}
+                onPress={() => {
+                  useAuthStore.getState().setToken('demo-token');
+                  navigation.reset({ index: 0, routes: [{ name: 'Home' }] });
+                }}
+              >
+                <Text style={[styles.buttonDemoText, { color: colors.primary }]}>
+                  {'🏠 Demo — Home directement (avec shh fictifs)'}
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.buttonDemo, { backgroundColor: '#1A1A1A', borderWidth: 1, borderColor: colors.primary }]}
+                activeOpacity={0.8}
+                onPress={() => {
+                  useAuthStore.getState().setToken('demo-token');
+                  navigation.reset({ index: 0, routes: [{ name: 'SendShh' }] });
+                }}
+              >
+                <Text style={[styles.buttonDemoText, { color: colors.primary }]}>
+                  {'🤫 Demo — Envoyer un shh'}
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.buttonDemo, { backgroundColor: '#1A1A1A', borderWidth: 1, borderColor: colors.primary }]}
+                activeOpacity={0.8}
+                onPress={() => {
+                  useAuthStore.getState().setToken('demo-token');
+                  navigation.reset({ index: 0, routes: [{ name: 'ShhDetail', params: { shhId: 'demo-shh-1' } }] });
+                }}
+              >
+                <Text style={[styles.buttonDemoText, { color: colors.primary }]}>
+                  {'💬 Demo — Détail shh (messages + photo blur)'}
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.buttonDemo, { backgroundColor: '#1A1A1A', borderWidth: 1, borderColor: colors.primary }]}
+                activeOpacity={0.8}
+                onPress={() => {
+                  useAuthStore.getState().setToken('demo-token');
+                  navigation.reset({ index: 0, routes: [{ name: 'Settings' }] });
+                }}
+              >
+                <Text style={[styles.buttonDemoText, { color: colors.primary }]}>
+                  {'⚙️ Demo — Paramètres'}
+                </Text>
+              </TouchableOpacity>
+            </>
           )}
         </View>
 
