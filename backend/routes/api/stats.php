@@ -1,3 +1,8 @@
 <?php
 
-// Community stats routes will be added in Sprint 3-4
+declare(strict_types=1);
+
+use App\Http\Controllers\Api\StatsController;
+use Illuminate\Support\Facades\Route;
+
+Route::get('stats/community', [StatsController::class, 'community']);

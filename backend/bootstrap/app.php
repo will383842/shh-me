@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Middleware\EnsureAdult;
+use App\Http\Middleware\TrackLastActive;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -26,7 +28,14 @@ return Application::configure(basePath: dirname(__DIR__))
         },
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        $middleware->alias([
+            'adult' => EnsureAdult::class,
+            'track.active' => TrackLastActive::class,
+        ]);
+
+        $middleware->appendToGroup('api', [
+            TrackLastActive::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

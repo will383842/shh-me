@@ -1,3 +1,23 @@
 <?php
 
-// User routes will be added in Sprint 1-2 (F01)
+declare(strict_types=1);
+
+use App\Http\Controllers\Api\BlockController;
+use App\Http\Controllers\Api\FeedbackController;
+use App\Http\Controllers\Api\PanicController;
+use App\Http\Controllers\Api\UserController;
+use Illuminate\Support\Facades\Route;
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('me', [UserController::class, 'me']);
+    Route::patch('me', [UserController::class, 'update']);
+    Route::delete('me', [UserController::class, 'destroy']);
+    Route::get('me/export', [UserController::class, 'export']);
+
+    Route::post('feedback', [FeedbackController::class, 'store']);
+    Route::post('me/panic', [PanicController::class, 'trigger']);
+
+    Route::post('blocks/{user}', [BlockController::class, 'store']);
+    Route::delete('blocks/{user}', [BlockController::class, 'destroy']);
+    Route::get('blocks', [BlockController::class, 'index']);
+});

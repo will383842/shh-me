@@ -1,3 +1,10 @@
 <?php
 
-// Report routes will be added in Sprint 3-4
+declare(strict_types=1);
+
+use App\Http\Controllers\Api\ReportController;
+use Illuminate\Support\Facades\Route;
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('reports', [ReportController::class, 'store']);
+});

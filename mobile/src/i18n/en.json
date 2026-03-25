@@ -14,13 +14,15 @@
     "birthYear": {
       "title": "When were you born?",
       "subtitle": "Shh Me is for 18+ only",
-      "blocked": "Shh Me is reserved for 18 and over. See you soon \ud83e\udd2b"
+      "blocked": "Shh Me is reserved for 18 and over. See you soon \ud83e\udd2b",
+      "confirm": "Continue"
     }
   },
   "home": {
     "empty": {
       "title": "Your story begins.",
-      "subtitle": "Someone will dare. \ud83e\udd2b"
+      "subtitle": "Someone will dare. \ud83e\udd2b",
+      "cta": "Send your first shh \ud83e\udd2b"
     },
     "shhCount_one": "{{count}} secret",
     "shhCount_other": "{{count}} secrets"
@@ -30,7 +32,12 @@
       "holdToSend": "Hold 3 seconds to send",
       "firstWord": "One word for them.",
       "firstWordPlaceholder": "One word...",
-      "sent": "Your shh has been sent \ud83e\udd2b"
+      "sent": "Your shh has been sent \ud83e\udd2b",
+      "pickContact": "Who is it for?",
+      "takeSelfie": "Take a selfie (optional)",
+      "skipSelfie": "Skip",
+      "previewBlur": "Choose your blur level",
+      "step": "Step {{current}} of {{total}}"
     },
     "expiration": {
       "breathing": "This heartbeat is still breathing\u2026",
@@ -41,7 +48,14 @@
     "message": {
       "placeholder": "Write a secret thought...",
       "maxLength": "{{count}}/200"
-    }
+    },
+    "guess": {
+      "title": "Who do you think it is? \ud83e\udd2b",
+      "notThisTime": "Not this time \ud83e\udd2b",
+      "attemptsLeft": "{{count}} attempts left",
+      "noMoreAttempts": "No more attempts \ud83e\udd2b"
+    },
+    "share": "Share \ud83e\udd2b"
   },
   "audio": {
     "record": "Hold to record",
@@ -75,7 +89,14 @@
     "blocked": "Blocked users",
     "deleteAccount": "Delete my account",
     "deleteConfirm": "This action is irreversible. All your data will be deleted.",
-    "logout": "Log out"
+    "logout": "Log out",
+    "ghost": "Shh Ghost",
+    "helpFeedback": "Help & Feedback",
+    "privacyPolicy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "communityGuidelines": "Community Guidelines",
+    "panic": "Stop everything",
+    "panicConfirm": "This will block all conversations and make your profile invisible. Continue?"
   },
   "profile": {
     "shhLifetime": "Shhs lifetime"
@@ -88,7 +109,8 @@
   },
   "error": {
     "generic": "Something didn't work. Try again \ud83e\udd2b",
-    "network": "No connection. Don't worry, we'll sync when you're back \ud83e\udd2b"
+    "network": "No connection. Don't worry, we'll sync when you're back \ud83e\udd2b",
+    "boundary": "Something isn't right \ud83e\udd2b \u2014 Try again"
   },
   "ghost": {
     "push": "People near you sent a shh tonight \ud83e\udd2b"

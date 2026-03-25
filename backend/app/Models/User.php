@@ -2,48 +2,74 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Database\Factories\UserFactory;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
+    use HasApiTokens, HasUlids, SoftDeletes;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
     protected $fillable = [
-        'name',
         'email',
-        'password',
+        'birth_year',
+        'city',
+        'country_code',
+        'preferred_locale',
+        'timezone',
+        'device_token',
+        'onboarding_completed',
+        'referrer_code',
+        'referred_by',
+        'last_active_at',
+        'shh_ghost_enabled',
+        'accepted_terms_at',
+        'paused_until',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
     protected $hidden = [
-        'password',
-        'remember_token',
+        'apple_id',
+        'google_id',
+        'device_token',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
+            'birth_year' => 'integer',
+            'onboarding_completed' => 'boolean',
+            'shh_ghost_enabled' => 'boolean',
+            'is_premium' => 'boolean',
+            'last_active_at' => 'datetime',
+            'accepted_terms_at' => 'datetime',
+            'paused_until' => 'datetime',
         ];
+    }
+
+    public function shh(): HasMany
+    {
+        return $this->hasMany(Shh::class, 'id')
+            ->whereIn('vault_ref', function ($query) {
+                $query->select('id')
+                    ->from('vault_shh_links')
+                    ->whereRaw('sender_encrypted = ? OR receiver_encrypted = ?', [$this->id, $this->id]);
+            });
+    }
+
+    public function blocks(): HasMany
+    {
+        return $this->hasMany(UserBlock::class, 'blocker_id');
+    }
+
+    public function contacts(): HasMany
+    {
+        return $this->hasMany(UserContact::class, 'user_id');
+    }
+
+    public function feedbacks(): HasMany
+    {
+        return $this->hasMany(UserFeedback::class, 'user_id');
     }
 }

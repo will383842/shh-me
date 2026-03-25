@@ -158,6 +158,7 @@ return [
     */
 
     'message_encryption' => 'AES-256-CBC',
+    'vault_encryption_key' => env('VAULT_ENCRYPTION_KEY', ''),
 
     /*
     |--------------------------------------------------------------------------

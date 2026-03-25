@@ -1,3 +1,15 @@
 <?php
 
-// Auth routes will be added in Sprint 1-2 (F01)
+declare(strict_types=1);
+
+use App\Http\Controllers\Api\AuthController;
+use Illuminate\Support\Facades\Route;
+
+Route::prefix('auth')->group(function () {
+    Route::post('apple', [AuthController::class, 'apple']);
+    Route::post('google', [AuthController::class, 'google']);
+
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::post('logout', [AuthController::class, 'logout']);
+    });
+});

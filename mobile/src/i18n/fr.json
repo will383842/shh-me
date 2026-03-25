@@ -14,13 +14,15 @@
     "birthYear": {
       "title": "Quelle est ton ann\u00e9e de naissance ?",
       "subtitle": "Shh Me est r\u00e9serv\u00e9 aux 18 ans et plus",
-      "blocked": "Shh Me est r\u00e9serv\u00e9 aux 18 ans et plus. On se retrouve bient\u00f4t \ud83e\udd2b"
+      "blocked": "Shh Me est r\u00e9serv\u00e9 aux 18 ans et plus. On se retrouve bient\u00f4t \ud83e\udd2b",
+      "confirm": "Continuer"
     }
   },
   "home": {
     "empty": {
       "title": "Ton histoire commence.",
-      "subtitle": "Quelqu'un va oser. \ud83e\udd2b"
+      "subtitle": "Quelqu'un va oser. \ud83e\udd2b",
+      "cta": "Envoie ton premier shh \ud83e\udd2b"
     },
     "shhCount_one": "{{count}} secret",
     "shhCount_other": "{{count}} secrets"
@@ -30,7 +32,12 @@
       "holdToSend": "Maintiens 3 secondes pour envoyer",
       "firstWord": "Un seul mot pour cette personne.",
       "firstWordPlaceholder": "Un mot...",
-      "sent": "Ton shh a \u00e9t\u00e9 envoy\u00e9 \ud83e\udd2b"
+      "sent": "Ton shh a \u00e9t\u00e9 envoy\u00e9 \ud83e\udd2b",
+      "pickContact": "C'est pour qui ?",
+      "takeSelfie": "Prends un selfie (optionnel)",
+      "skipSelfie": "Passer",
+      "previewBlur": "Choisis ton niveau de flou",
+      "step": "\u00c9tape {{current}} sur {{total}}"
     },
     "expiration": {
       "breathing": "Ce battement respire encore\u2026",
@@ -41,7 +48,14 @@
     "message": {
       "placeholder": "\u00c9cris une pens\u00e9e secr\u00e8te...",
       "maxLength": "{{count}}/200"
-    }
+    },
+    "guess": {
+      "title": "C'est qui d'apr\u00e8s toi ? \ud83e\udd2b",
+      "notThisTime": "Pas cette fois \ud83e\udd2b",
+      "attemptsLeft": "{{count}} tentatives restantes",
+      "noMoreAttempts": "Plus de tentatives \ud83e\udd2b"
+    },
+    "share": "Partager \ud83e\udd2b"
   },
   "audio": {
     "record": "Maintiens pour enregistrer",
@@ -58,7 +72,7 @@
     "request": "R\u00e9v\u00e9ler",
     "cancel": "Annuler",
     "countdown": "R\u00e9v\u00e9lation dans {{seconds}}s...",
-    "connected": "\ud83e\udd2b Connected",
+    "connected": "\ud83e\udd2b Connect\u00e9",
     "sendAnother": "Envoie un shh \u00e0 quelqu\u2019un d\u2019autre \ud83e\udd2b"
   },
   "notification": {
@@ -75,7 +89,14 @@
     "blocked": "Utilisateurs bloqu\u00e9s",
     "deleteAccount": "Supprimer mon compte",
     "deleteConfirm": "Cette action est irr\u00e9versible. Toutes tes donn\u00e9es seront supprim\u00e9es.",
-    "logout": "Se d\u00e9connecter"
+    "logout": "Se d\u00e9connecter",
+    "ghost": "Shh Fant\u00f4me",
+    "helpFeedback": "Aide & Retours",
+    "privacyPolicy": "Politique de confidentialit\u00e9",
+    "terms": "Conditions d'utilisation",
+    "communityGuidelines": "R\u00e8gles de la communaut\u00e9",
+    "panic": "Tout arr\u00eater",
+    "panicConfirm": "Cela bloquera toutes les conversations et rendra ton profil invisible. Continuer ?"
   },
   "profile": {
     "shhLifetime": "Shhs \u00e0 vie"
@@ -88,7 +109,8 @@
   },
   "error": {
     "generic": "Quelque chose n\u2019a pas march\u00e9. R\u00e9essaie \ud83e\udd2b",
-    "network": "Pas de connexion. T\u2019inqui\u00e8te pas, on synchronise d\u00e8s ton retour \ud83e\udd2b"
+    "network": "Pas de connexion. T\u2019inqui\u00e8te pas, on synchronise d\u00e8s ton retour \ud83e\udd2b",
+    "boundary": "Quelque chose ne va pas \ud83e\udd2b \u2014 R\u00e9essaie"
   },
   "ghost": {
     "push": "Des personnes de ton quartier ont envoy\u00e9 un shh ce soir \ud83e\udd2b"
