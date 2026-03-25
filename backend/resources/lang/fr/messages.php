@@ -1,0 +1,110 @@
+<?php
+
+return [
+
+    /*
+    |--------------------------------------------------------------------------
+    | Notifications
+    |--------------------------------------------------------------------------
+    */
+
+    'notification' => [
+        'shh_received' => 'Quelqu\'un a un secret pour toi 🤫',
+        'new_message' => 'Une pensée secrète t\'attend 🤫',
+        'audio_received' => 'Tu as reçu une voix mystérieuse 🤫',
+        'morning_question' => 'Une question pour ton secret... 🤫',
+        'afternoon_clue' => 'Un indice vient d\'arriver... 🤫',
+        'morning_anticipation' => 'Ton indice arrive entre 12h et 15h. Prépare-toi. 🤫',
+        'reveal_ready' => 'Le reveal est prêt. Tu oses ? 🤫',
+        'photo_unblurred' => 'La photo de ton admirateur secret est plus nette… 🤫',
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Errors (never say "Erreur")
+    |--------------------------------------------------------------------------
+    */
+
+    'error' => [
+        'generic' => 'Quelque chose n\'a pas marché. Réessaie 🤫',
+        'unauthorized' => 'Cette action nécessite une authentification 🤫',
+        'forbidden' => 'Tu n\'as pas accès à ça 🤫',
+        'not_found' => 'Ce battement a disparu 🤫',
+        'too_many_requests' => 'Doucement 🤫',
+        'validation_failed' => 'Il manque quelque chose 🤫',
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Auth
+    |--------------------------------------------------------------------------
+    */
+
+    'auth' => [
+        'age_blocked' => 'Shh Me est réservé aux 18 ans et plus. On se retrouve bientôt 🤫',
+        'logged_out' => 'À bientôt 🤫',
+        'account_deleted' => 'Ton compte a été supprimé. Toutes les données seront purgées sous 30 jours.',
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Shh Lifecycle
+    |--------------------------------------------------------------------------
+    */
+
+    'shh' => [
+        'expiration' => [
+            'breathing' => 'Ce battement respire encore…',
+            'weakening' => 'Le battement s\'affaiblit…',
+            'last_moments' => 'Derniers instants…',
+            'existed' => 'Ce battement a existé.',
+        ],
+        'sent' => 'Ton shh a été envoyé 🤫',
+        'max_per_day' => 'Tu as atteint ta limite du jour. Reviens demain 🤫',
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Reveal
+    |--------------------------------------------------------------------------
+    */
+
+    'reveal' => [
+        'connected' => '🤫 Connected',
+        'cancelled' => 'Reveal annulé',
+        'already_requested' => 'Tu as déjà demandé un reveal pour ce shh',
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Moderation
+    |--------------------------------------------------------------------------
+    */
+
+    'moderation' => [
+        'text_blocked' => 'Ce message n\'a pas pu être envoyé 🤫',
+        'photo_blocked' => 'Cette photo n\'a pas pu être envoyée 🤫',
+        'audio_blocked' => 'Cet audio n\'a pas pu être envoyé 🤫',
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Relance (anti-Duolingo)
+    |--------------------------------------------------------------------------
+    */
+
+    'relance' => [
+        'gentle' => 'Quelque chose de doux t\'attend quand tu voudras. Pas de rush. 🤫',
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Ghost Push
+    |--------------------------------------------------------------------------
+    */
+
+    'ghost' => [
+        'push' => 'Des personnes de ton quartier ont envoyé un shh ce soir 🤫',
+    ],
+
+];
