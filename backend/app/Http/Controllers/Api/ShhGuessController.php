@@ -32,7 +32,7 @@ class ShhGuessController extends Controller
             return response()->json([
                 'error' => [
                     'code' => 'forbidden',
-                    'message' => 'Seul le destinataire peut deviner.',
+                    'message' => __('messages.guess.receiver_only'),
                     'status' => 403,
                 ],
             ], 403);
@@ -44,7 +44,7 @@ class ShhGuessController extends Controller
             return response()->json([
                 'error' => [
                     'code' => 'max_attempts_reached',
-                    'message' => 'Tu as utilise tes 3 tentatives.',
+                    'message' => __('messages.guess.max_attempts'),
                     'status' => 422,
                 ],
             ], 422);
@@ -60,7 +60,7 @@ class ShhGuessController extends Controller
 
         return response()->json([
             'data' => [
-                'result' => 'Pas cette fois',
+                'result' => __('messages.guess.wrong'),
                 'attempts_remaining' => $remaining,
             ],
         ]);

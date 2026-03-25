@@ -30,20 +30,26 @@ const PRIVACY_URL = 'https://shh-me.com/privacy';
 const TERMS_URL = 'https://shh-me.com/terms';
 const GUIDELINES_URL = 'https://shh-me.com/guidelines';
 
+const SUPPORTED_LOCALES = ['en', 'fr'] as const;
+const LOCALE_LABELS: Record<string, string> = { en: 'English', fr: 'Fran\u00e7ais' };
+
 interface SettingRowProps {
   label: string;
   onPress?: () => void;
   right?: React.ReactNode;
   destructive?: boolean;
+  accessibilityLabel?: string;
 }
 
-function SettingRow({ label, onPress, right, destructive }: SettingRowProps) {
+function SettingRow({ label, onPress, right, destructive, accessibilityLabel }: SettingRowProps) {
   return (
     <TouchableOpacity
       style={styles.row}
       onPress={onPress}
       activeOpacity={onPress ? 0.7 : 1}
       disabled={!onPress}
+      accessibilityLabel={accessibilityLabel || label}
+      accessibilityRole="button"
     >
       <ShhText
         variant="body"
@@ -86,13 +92,14 @@ export default function SettingsScreen() {
   };
 
   const handleToggleLanguage = () => {
-    const newLocale = locale === 'en' ? 'fr' : 'en';
-    setLocale(newLocale);
-    void i18n.changeLanguage(newLocale);
+    const currentIndex = SUPPORTED_LOCALES.indexOf(locale as typeof SUPPORTED_LOCALES[number]);
+    const nextLocale = SUPPORTED_LOCALES[(currentIndex + 1) % SUPPORTED_LOCALES.length];
+    setLocale(nextLocale);
+    void i18n.changeLanguage(nextLocale);
     if (token) {
       void apiRequest('/user/settings', {
         method: 'PUT',
-        body: { locale: newLocale },
+        body: { locale: nextLocale },
         token,
       });
     }
@@ -180,8 +187,9 @@ export default function SettingsScreen() {
         />
 
         <SettingRow
-          label={`${t('settings.language')}: ${locale.toUpperCase()}`}
+          label={`${t('settings.language')}: ${LOCALE_LABELS[locale] || locale.toUpperCase()}`}
           onPress={handleToggleLanguage}
+          accessibilityLabel={`${t('settings.language')}: ${LOCALE_LABELS[locale] || locale.toUpperCase()}`}
         />
 
         <SettingRow
@@ -242,6 +250,8 @@ export default function SettingsScreen() {
           style={styles.panicButton}
           onPress={handlePanic}
           activeOpacity={0.8}
+          accessibilityLabel={t('settings.panic')}
+          accessibilityRole="button"
         >
           <ShhText variant="body" style={styles.panicText}>
             {t('settings.panic')}

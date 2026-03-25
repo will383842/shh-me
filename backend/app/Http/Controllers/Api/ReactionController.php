@@ -66,14 +66,14 @@ class ReactionController extends Controller
             return response()->json([
                 'error' => [
                     'code' => 'no_reaction',
-                    'message' => 'Aucune reaction a supprimer.',
+                    'message' => __('messages.reaction.none_to_remove'),
                     'status' => 404,
                 ],
             ], 404);
         }
 
         return response()->json([
-            'message' => 'Reaction retiree.',
+            'message' => __('messages.reaction.removed'),
         ]);
     }
 }

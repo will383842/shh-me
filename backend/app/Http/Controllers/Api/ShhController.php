@@ -12,6 +12,7 @@ use App\Models\Shh;
 use App\Models\ShhMessage;
 use App\Models\ShhPhoto;
 use App\Models\User;
+use App\Models\UserBlock;
 use App\Services\BpmService;
 use App\Services\ShhVaultService;
 use Illuminate\Http\JsonResponse;
@@ -32,14 +33,44 @@ class ShhController extends Controller
         $user = $request->user();
         $contactIdentifier = $request->validated('contact_identifier');
 
+        // BUG 3: Prevent self-shh
+        if ($contactIdentifier === (string) $user->id) {
+            return response()->json([
+                'error' => ['code' => 'SELF_SHH_NOT_ALLOWED', 'message' => __('messages.error.forbidden'), 'status' => 422],
+            ], 422);
+        }
+
         if (! $this->vaultService->canSendShh($user, $contactIdentifier)) {
             return response()->json([
                 'error' => [
                     'code' => 'shh_blocked',
-                    'message' => 'Tu ne peux plus envoyer de shh a cette personne.',
+                    'message' => __('messages.shh.blocked'),
                     'status' => 403,
                 ],
             ], 403);
+        }
+
+        // BUG 2: Check if either user has blocked the other
+        $isBlocked = UserBlock::where(function ($q) use ($user, $contactIdentifier) {
+            $q->where('blocker_id', $contactIdentifier)
+                ->where('blocked_id', $user->id);
+        })->orWhere(function ($q) use ($user, $contactIdentifier) {
+            $q->where('blocker_id', $user->id)
+                ->where('blocked_id', $contactIdentifier);
+        })->exists();
+
+        if ($isBlocked) {
+            return response()->json([
+                'error' => ['code' => 'USER_BLOCKED', 'message' => __('messages.error.forbidden'), 'status' => 403],
+            ], 403);
+        }
+
+        // BUG 4: Max 10 active shh per user
+        $activeShhCount = Shh::where('status', 'active')->count();
+        if ($activeShhCount >= 10) {
+            return response()->json([
+                'error' => ['code' => 'MAX_ACTIVE_SHH', 'message' => __('messages.shh.max_per_day'), 'status' => 422],
+            ], 422);
         }
 
         $shh = DB::transaction(function () use ($user, $contactIdentifier, $request) {

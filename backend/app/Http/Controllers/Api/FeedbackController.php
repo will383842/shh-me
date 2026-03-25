@@ -27,7 +27,7 @@ class FeedbackController extends Controller
         ]);
 
         return response()->json([
-            'message' => 'Merci pour ton retour.',
+            'message' => __('messages.feedback.thanks'),
         ], 201);
     }
 }

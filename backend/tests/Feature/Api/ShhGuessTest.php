@@ -24,12 +24,10 @@ test('guess returns generic response', function () {
         ]);
 
     $response->assertStatus(200)
-        ->assertJson([
-            'data' => [
-                'result' => 'Pas cette fois',
-                'attempts_remaining' => 2,
-            ],
-        ]);
+        ->assertJsonStructure([
+            'data' => ['result', 'attempts_remaining'],
+        ])
+        ->assertJsonPath('data.attempts_remaining', 2);
 });
 
 test('guess max 3 attempts', function () {

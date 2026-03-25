@@ -29,7 +29,7 @@ class AuthController extends Controller
             return response()->json([
                 'error' => [
                     'code' => 'age_restricted',
-                    'message' => 'Tu dois avoir au moins '.$minimumAge.' ans pour utiliser Shh Me.',
+                    'message' => __('messages.auth.age_blocked', ['age' => $minimumAge]),
                     'status' => 403,
                 ],
             ], 403);
@@ -74,7 +74,7 @@ class AuthController extends Controller
             return response()->json([
                 'error' => [
                     'code' => 'age_restricted',
-                    'message' => 'Tu dois avoir au moins '.$minimumAge.' ans pour utiliser Shh Me.',
+                    'message' => __('messages.auth.age_blocked', ['age' => $minimumAge]),
                     'status' => 403,
                 ],
             ], 403);
@@ -115,6 +115,6 @@ class AuthController extends Controller
             $user->tokens()->delete();
         }
 
-        return response()->json(['message' => 'Shh... tu es parti(e) en silence.'], 200);
+        return response()->json(['message' => __('messages.auth.logged_out')], 200);
     }
 }

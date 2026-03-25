@@ -20,9 +20,7 @@ test('create report success', function () {
         ]);
 
     $response->assertStatus(201)
-        ->assertJson([
-            'message' => 'Signalement pris en compte. Merci.',
-        ]);
+        ->assertJsonStructure(['message']);
 
     $this->assertDatabaseHas('reports', [
         'reporter_id' => $user->id,

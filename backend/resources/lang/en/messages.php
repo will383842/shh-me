@@ -61,6 +61,46 @@ return [
         ],
         'sent' => 'Your shh has been sent 🤫',
         'max_per_day' => "You've reached your daily limit. Come back tomorrow 🤫",
+        'blocked' => "You can't send a shh to this person 🤫",
+        'inactive' => 'This shh is no longer active 🤫',
+        'not_participant' => "You're not part of this shh 🤫",
+        'no_photo' => 'This shh has no photo 🤫',
+        'photo_processing' => 'Photo is being prepared 🤫',
+    ],
+
+    'guess' => [
+        'wrong' => 'Not this time 🤫',
+        'max_attempts' => 'No more attempts 🤫',
+        'receiver_only' => 'Only the receiver can guess 🤫',
+    ],
+
+    'block' => [
+        'blocked' => 'User blocked 🤫',
+        'unblocked' => 'User unblocked 🤫',
+        'already_blocked' => 'Already blocked',
+        'not_blocked' => 'Not blocked',
+        'self_block' => "You can't block yourself 🤫",
+    ],
+
+    'report' => [
+        'submitted' => 'Report submitted. Thank you 🤫',
+    ],
+
+    'feedback' => [
+        'thanks' => 'Thank you for your feedback 🤫',
+    ],
+
+    'panic' => [
+        'activated' => "Everything is stopped. You're safe. 🤫 Your account will reactivate in 24h.",
+    ],
+
+    'reaction' => [
+        'removed' => 'Reaction removed',
+        'none_to_remove' => 'No reaction to remove',
+    ],
+
+    'user' => [
+        'account_deleted' => 'Your account has been deleted. All data will be purged within 30 days.',
     ],
 
     /*

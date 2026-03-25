@@ -78,9 +78,7 @@ test('logout revokes token', function () {
         ->postJson('/api/v1/auth/logout');
 
     $response->assertStatus(200)
-        ->assertJson([
-            'message' => 'Shh... tu es parti(e) en silence.',
-        ]);
+        ->assertJsonStructure(['message']);
 });
 
 test('logout without token returns 401', function () {

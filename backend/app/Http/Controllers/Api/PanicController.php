@@ -45,7 +45,7 @@ class PanicController extends Controller
         });
 
         return response()->json([
-            'message' => 'Mode panique active. Tout a ete efface. Respire.',
+            'message' => __('messages.panic.activated'),
         ]);
     }
 }

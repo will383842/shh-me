@@ -48,7 +48,7 @@ class UserController extends Controller
         $user->delete();
 
         return response()->json([
-            'message' => 'Ton compte a disparu, comme un souffle.',
+            'message' => __('messages.user.account_deleted'),
         ]);
     }
 

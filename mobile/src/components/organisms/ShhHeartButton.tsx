@@ -72,7 +72,12 @@ export default function ShhHeartButton({ onComplete }: ShhHeartButtonProps) {
 
   return (
     <View style={styles.container}>
-      <Pressable onPressIn={handlePressIn} onPressOut={handlePressOut}>
+      <Pressable
+        onPressIn={handlePressIn}
+        onPressOut={handlePressOut}
+        accessibilityLabel={t('shh.send.holdToSend')}
+        accessibilityRole="button"
+      >
         <Animated.View style={[styles.button, buttonStyle]}>
           <ShhText variant="display" style={styles.emoji}>
             {'\ud83e\udd2b'}

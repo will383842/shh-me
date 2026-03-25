@@ -18,7 +18,7 @@ class ShhPhotoController extends Controller
             return response()->json([
                 'error' => [
                     'code' => 'no_photo',
-                    'message' => 'Ce shh ne contient pas de photo.',
+                    'message' => __('messages.shh.no_photo'),
                     'status' => 404,
                 ],
             ], 404);
@@ -30,7 +30,7 @@ class ShhPhotoController extends Controller
             return response()->json([
                 'error' => [
                     'code' => 'photo_not_ready',
-                    'message' => 'La photo est en cours de traitement.',
+                    'message' => __('messages.shh.photo_processing'),
                     'status' => 404,
                 ],
             ], 404);

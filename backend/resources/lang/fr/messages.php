@@ -61,6 +61,46 @@ return [
         ],
         'sent' => 'Ton shh a été envoyé 🤫',
         'max_per_day' => 'Tu as atteint ta limite du jour. Reviens demain 🤫',
+        'blocked' => 'Tu ne peux pas envoyer de shh à cette personne 🤫',
+        'inactive' => 'Ce shh n\'est plus actif 🤫',
+        'not_participant' => 'Tu ne fais pas partie de ce shh 🤫',
+        'no_photo' => 'Ce shh n\'a pas de photo 🤫',
+        'photo_processing' => 'La photo est en cours de préparation 🤫',
+    ],
+
+    'guess' => [
+        'wrong' => 'Pas cette fois 🤫',
+        'max_attempts' => 'Plus de tentatives 🤫',
+        'receiver_only' => 'Seul le destinataire peut deviner 🤫',
+    ],
+
+    'block' => [
+        'blocked' => 'Utilisateur bloqué 🤫',
+        'unblocked' => 'Utilisateur débloqué 🤫',
+        'already_blocked' => 'Déjà bloqué',
+        'not_blocked' => 'Pas bloqué',
+        'self_block' => 'Tu ne peux pas te bloquer toi-même 🤫',
+    ],
+
+    'report' => [
+        'submitted' => 'Signalement envoyé. Merci 🤫',
+    ],
+
+    'feedback' => [
+        'thanks' => 'Merci pour ton retour 🤫',
+    ],
+
+    'panic' => [
+        'activated' => 'Tout est arrêté. Tu es en sécurité. 🤫 Ton compte se réactivera dans 24h.',
+    ],
+
+    'reaction' => [
+        'removed' => 'Réaction supprimée',
+        'none_to_remove' => 'Pas de réaction à supprimer',
+    ],
+
+    'user' => [
+        'account_deleted' => 'Ton compte a été supprimé. Toutes les données seront purgées sous 30 jours.',
     ],
 
     /*

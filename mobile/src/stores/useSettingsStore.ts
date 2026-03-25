@@ -1,4 +1,8 @@
 import { create } from 'zustand';
+import { createMMKV } from 'react-native-mmkv';
+import type { MMKV } from 'react-native-mmkv';
+
+const storage: MMKV = createMMKV({ id: 'shh-settings' });
 
 interface SettingsState {
   locale: 'en' | 'fr';
@@ -8,8 +12,11 @@ interface SettingsState {
 }
 
 export const useSettingsStore = create<SettingsState>((set) => ({
-  locale: 'en',
+  locale: (storage.getString('locale') as 'en' | 'fr') || 'en',
   notificationsEnabled: true,
-  setLocale: (locale) => set({ locale }),
+  setLocale: (locale) => {
+    storage.set('locale', locale);
+    set({ locale });
+  },
   setNotificationsEnabled: (notificationsEnabled) => set({ notificationsEnabled }),
 }));

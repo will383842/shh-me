@@ -30,8 +30,8 @@ class ShhVaultService
 
         DB::connection('vault')->table('vault_shh_links')->insert([
             'id' => $vaultRef,
-            'encrypted_sender' => $encryptedSender,
-            'encrypted_receiver' => $encryptedReceiver,
+            'sender_encrypted' => $encryptedSender,
+            'receiver_encrypted' => $encryptedReceiver,
             'harassment_counter' => 0,
             'created_at' => now(),
             'updated_at' => now(),
@@ -45,8 +45,8 @@ class ShhVaultService
         $links = DB::connection('vault')->table('vault_shh_links')->get();
 
         foreach ($links as $link) {
-            $decryptedSender = $this->decrypt($link->encrypted_sender);
-            $decryptedReceiver = $this->decrypt($link->encrypted_receiver);
+            $decryptedSender = $this->decrypt($link->sender_encrypted);
+            $decryptedReceiver = $this->decrypt($link->receiver_encrypted);
 
             if ($decryptedSender === (string) $sender->id && $decryptedReceiver === $receiverIdentifier) {
                 if ($link->harassment_counter >= 3) {
@@ -67,8 +67,8 @@ class ShhVaultService
         }
 
         /** @var \stdClass $link */
-        $senderId = $this->decrypt($link->encrypted_sender);
-        $receiverId = $this->decrypt($link->encrypted_receiver);
+        $senderId = $this->decrypt($link->sender_encrypted);
+        $receiverId = $this->decrypt($link->receiver_encrypted);
 
         if ($senderId === (string) $user->id) {
             return 'sender';
@@ -94,8 +94,8 @@ class ShhVaultService
 
         /** @var \stdClass $link */
         return [
-            'senderId' => $this->decrypt($link->encrypted_sender),
-            'receiverId' => $this->decrypt($link->encrypted_receiver),
+            'senderId' => $this->decrypt($link->sender_encrypted),
+            'receiverId' => $this->decrypt($link->receiver_encrypted),
         ];
     }
 
@@ -120,8 +120,8 @@ class ShhVaultService
         $idsToDelete = [];
 
         foreach ($links as $link) {
-            $senderId = $this->decrypt($link->encrypted_sender);
-            $receiverId = $this->decrypt($link->encrypted_receiver);
+            $senderId = $this->decrypt($link->sender_encrypted);
+            $receiverId = $this->decrypt($link->receiver_encrypted);
 
             if ($senderId === (string) $userId || $receiverId === (string) $userId) {
                 $idsToDelete[] = $link->id;

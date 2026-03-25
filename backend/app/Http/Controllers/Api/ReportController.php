@@ -26,7 +26,7 @@ class ReportController extends Controller
         ]);
 
         return response()->json([
-            'message' => 'Signalement pris en compte. Merci.',
+            'message' => __('messages.report.submitted'),
         ], 201);
     }
 }

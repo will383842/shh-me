@@ -61,6 +61,8 @@ export default function AuthScreen() {
           activeOpacity={0.8}
           onPress={() => handleLogin('apple')}
           disabled={isLoggingIn}
+          accessibilityLabel={t('auth.signInApple')}
+          accessibilityRole="button"
         >
           <ShhText variant="body" style={styles.buttonText}>
             {t('auth.signInApple')}
@@ -72,6 +74,8 @@ export default function AuthScreen() {
           activeOpacity={0.8}
           onPress={() => handleLogin('google')}
           disabled={isLoggingIn}
+          accessibilityLabel={t('auth.signInGoogle')}
+          accessibilityRole="button"
         >
           <ShhText variant="body" style={styles.buttonText}>
             {t('auth.signInGoogle')}

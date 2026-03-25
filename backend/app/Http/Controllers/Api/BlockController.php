@@ -21,7 +21,7 @@ class BlockController extends Controller
             return response()->json([
                 'error' => [
                     'code' => 'self_block',
-                    'message' => 'Tu ne peux pas te bloquer toi-meme.',
+                    'message' => __('messages.block.self_block'),
                     'status' => 422,
                 ],
             ], 422);
@@ -35,7 +35,7 @@ class BlockController extends Controller
             return response()->json([
                 'error' => [
                     'code' => 'already_blocked',
-                    'message' => 'Cette personne est deja bloquee.',
+                    'message' => __('messages.block.already_blocked'),
                     'status' => 409,
                 ],
             ], 409);
@@ -47,7 +47,7 @@ class BlockController extends Controller
         ]);
 
         return response()->json([
-            'message' => 'Utilisateur bloque.',
+            'message' => __('messages.block.blocked'),
         ], 201);
     }
 
@@ -64,14 +64,14 @@ class BlockController extends Controller
             return response()->json([
                 'error' => [
                     'code' => 'not_blocked',
-                    'message' => 'Cette personne n\'est pas bloquee.',
+                    'message' => __('messages.block.not_blocked'),
                     'status' => 404,
                 ],
             ], 404);
         }
 
         return response()->json([
-            'message' => 'Utilisateur debloque.',
+            'message' => __('messages.block.unblocked'),
         ]);
     }
 

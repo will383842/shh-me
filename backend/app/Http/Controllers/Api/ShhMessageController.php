@@ -32,7 +32,7 @@ class ShhMessageController extends Controller
             return response()->json([
                 'error' => [
                     'code' => 'forbidden',
-                    'message' => 'Tu ne fais pas partie de ce shh.',
+                    'message' => __('messages.shh.not_participant'),
                     'status' => 403,
                 ],
             ], 403);
@@ -42,7 +42,7 @@ class ShhMessageController extends Controller
             return response()->json([
                 'error' => [
                     'code' => 'shh_inactive',
-                    'message' => 'Ce shh ne respire plus.',
+                    'message' => __('messages.shh.inactive'),
                     'status' => 422,
                 ],
             ], 422);
@@ -75,7 +75,7 @@ class ShhMessageController extends Controller
             return response()->json([
                 'error' => [
                     'code' => 'forbidden',
-                    'message' => 'Tu ne fais pas partie de ce shh.',
+                    'message' => __('messages.shh.not_participant'),
                     'status' => 403,
                 ],
             ], 403);
