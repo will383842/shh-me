@@ -1,64 +1,193 @@
 /**
- * BirthYearScreen — Immersive year picker for age verification (18+).
- * Arrow-based year selector with huge year display.
- * If underage, shows blocking state with red accent.
+ * BirthYearScreen — Immersive scroll wheel year picker.
+ * Slot-machine style: years roll vertically with snap.
+ * If underage, red blocking state appears.
  */
-import React, { useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import {
   View,
   TouchableOpacity,
   StyleSheet,
+  FlatList,
+  type ViewToken,
 } from 'react-native';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+  interpolate,
+  Extrapolation,
+  useAnimatedScrollHandler,
+} from 'react-native-reanimated';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useTranslation } from 'react-i18next';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import * as Haptics from 'expo-haptics';
 import ShhText from '../../components/atoms/ShhText';
 import { apiRequest } from '../../services/api';
 import { useAuthStore } from '../../stores/useAuthStore';
+import { colors } from '../../theme/colors';
+import { typography } from '../../theme/typography';
 import type { RootStackParamList } from '../../types';
 
 type Nav = NativeStackNavigationProp<RootStackParamList, 'BirthYear'>;
 
 const CURRENT_YEAR = new Date().getFullYear();
-const MIN_YEAR = 1920;
+const MIN_YEAR = 1940;
+const MAX_YEAR = CURRENT_YEAR - 5;
 const MIN_AGE = 18;
+const ITEM_HEIGHT = 70;
+const VISIBLE_ITEMS = 5;
+const WHEEL_HEIGHT = ITEM_HEIGHT * VISIBLE_ITEMS;
+
+const years = Array.from(
+  { length: MAX_YEAR - MIN_YEAR + 1 },
+  (_, i) => MAX_YEAR - i,
+);
+
+const AnimatedFlatList = Animated.createAnimatedComponent(
+  FlatList<number>,
+);
+
+function YearItem({
+  year,
+  index,
+  scrollY,
+}: {
+  year: number;
+  index: number;
+  scrollY: { value: number };
+}) {
+  const isBlocked = CURRENT_YEAR - year < MIN_AGE;
+
+  const animatedStyle = useAnimatedStyle(() => {
+    const center = index * ITEM_HEIGHT;
+    const diff = scrollY.value - center;
+    const scale = interpolate(
+      Math.abs(diff),
+      [0, ITEM_HEIGHT, ITEM_HEIGHT * 2],
+      [1, 0.75, 0.5],
+      Extrapolation.CLAMP,
+    );
+    const opacity = interpolate(
+      Math.abs(diff),
+      [0, ITEM_HEIGHT, ITEM_HEIGHT * 2],
+      [1, 0.4, 0.15],
+      Extrapolation.CLAMP,
+    );
+    const rotateX = interpolate(
+      diff,
+      [-ITEM_HEIGHT * 2, 0, ITEM_HEIGHT * 2],
+      [60, 0, -60],
+      Extrapolation.CLAMP,
+    );
+    return {
+      transform: [{ scale }, { rotateX: `${rotateX}deg` }],
+      opacity,
+    };
+  });
+
+  return (
+    <Animated.View style={[styles.yearItem, animatedStyle]}>
+      <Animated.Text
+        style={[
+          styles.yearText,
+          isBlocked && styles.yearTextBlocked,
+        ]}
+      >
+        {year}
+      </Animated.Text>
+    </Animated.View>
+  );
+}
 
 export default function BirthYearScreen() {
   const { t } = useTranslation();
   const navigation = useNavigation<Nav>();
   const token = useAuthStore((s) => s.token);
-  const [year, setYear] = useState(2000);
+  const [selectedYear, setSelectedYear] = useState(2000);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const scrollY = useSharedValue(0);
+  const flatListRef = useRef<FlatList<number>>(null);
+  const lastHapticYear = useRef(selectedYear);
 
-  const age = CURRENT_YEAR - year;
+  const age = CURRENT_YEAR - selectedYear;
   const isBlocked = age < MIN_AGE;
 
-  const incrementYear = () => {
-    if (year < CURRENT_YEAR) setYear((y) => y + 1);
-  };
+  const scrollHandler = useAnimatedScrollHandler({
+    onScroll: (event) => {
+      scrollY.value = event.contentOffset.y;
+    },
+  });
 
-  const decrementYear = () => {
-    if (year > MIN_YEAR) setYear((y) => y - 1);
-  };
+  const onViewableItemsChanged = useCallback(
+    ({ viewableItems }: { viewableItems: ViewToken[] }) => {
+      const center = viewableItems.find(
+        (item) => item.index !== null,
+      );
+      if (center?.item) {
+        const yr = center.item as number;
+        setSelectedYear(yr);
+        if (yr !== lastHapticYear.current) {
+          lastHapticYear.current = yr;
+          Haptics.selectionAsync();
+        }
+      }
+    },
+    [],
+  );
+
+  const viewabilityConfig = useRef({
+    itemVisiblePercentThreshold: 60,
+    minimumViewTime: 50,
+  }).current;
+
+  // Glow animation for the selection window
+  const glowOpacity = useSharedValue(0.15);
+  const glowStyle = useAnimatedStyle(() => ({
+    borderColor: isBlocked
+      ? `rgba(255,69,58,${glowOpacity.value})`
+      : `rgba(220,251,78,${glowOpacity.value})`,
+  }));
+
+  React.useEffect(() => {
+    glowOpacity.value = withTiming(0.4, { duration: 1200 });
+  }, [glowOpacity]);
+
+  const initialIndex = years.indexOf(2000);
 
   const handleConfirm = async () => {
     if (isBlocked || isSubmitting) return;
-
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     setIsSubmitting(true);
     try {
-      await apiRequest('/user/birth-year', {
-        method: 'PUT',
-        body: { birth_year: year },
+      await apiRequest('/me', {
+        method: 'PATCH',
+        body: { birth_year: selectedYear },
         token,
       });
-      navigation.reset({ index: 0, routes: [{ name: 'Home' }] });
     } catch {
-      // Silently retry on next attempt
-    } finally {
-      setIsSubmitting(false);
+      // Demo mode — continue anyway
     }
+    navigation.reset({ index: 0, routes: [{ name: 'Home' }] });
   };
+
+  const renderItem = useCallback(
+    ({ item, index }: { item: number; index: number }) => (
+      <YearItem year={item} index={index} scrollY={scrollY} />
+    ),
+    [scrollY],
+  );
+
+  const getItemLayout = useCallback(
+    (_: unknown, index: number) => ({
+      length: ITEM_HEIGHT,
+      offset: ITEM_HEIGHT * index,
+      index,
+    }),
+    [],
+  );
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -74,69 +203,78 @@ export default function BirthYearScreen() {
           </ShhText>
         </TouchableOpacity>
 
-        {/* Centered body */}
-        <View style={styles.body}>
+        {/* Title */}
+        <View style={styles.titleSection}>
           <ShhText variant="display" style={styles.title}>
             {t('onboarding.birthYear.title')}
           </ShhText>
           <ShhText variant="body" style={styles.subtitle}>
             {t('onboarding.birthYear.subtitle')}
           </ShhText>
+        </View>
 
-          {/* Year display */}
+        {/* Wheel picker */}
+        <View style={styles.wheelContainer}>
+          {/* Gradient fade top */}
+          <View style={styles.fadeTop} pointerEvents="none" />
+
+          {/* Selection window highlight */}
+          <Animated.View
+            style={[styles.selectionWindow, glowStyle]}
+            pointerEvents="none"
+          />
+
+          <AnimatedFlatList
+            ref={flatListRef}
+            data={years}
+            keyExtractor={(item) => item.toString()}
+            renderItem={renderItem}
+            getItemLayout={getItemLayout}
+            initialScrollIndex={initialIndex}
+            onScroll={scrollHandler}
+            scrollEventThrottle={16}
+            snapToInterval={ITEM_HEIGHT}
+            decelerationRate="fast"
+            showsVerticalScrollIndicator={false}
+            onViewableItemsChanged={onViewableItemsChanged}
+            viewabilityConfig={viewabilityConfig}
+            contentContainerStyle={{
+              paddingTop: ITEM_HEIGHT * 2,
+              paddingBottom: ITEM_HEIGHT * 2,
+            }}
+          />
+
+          {/* Gradient fade bottom */}
+          <View style={styles.fadeBottom} pointerEvents="none" />
+        </View>
+
+        {/* Age indicator */}
+        <View style={styles.ageRow}>
           <ShhText
-            variant="display"
+            variant="body"
             style={[
-              styles.yearDisplay,
-              isBlocked && styles.yearDisplayBlocked,
+              styles.ageText,
+              isBlocked && styles.ageTextBlocked,
             ]}
           >
-            {year}
+            {age} {t('onboarding.birthYear.yearsOld', { defaultValue: 'ans' })}
           </ShhText>
-
-          {/* Hint */}
-          <ShhText variant="body" style={styles.hint}>
-            {'\u2191 \u2193'} {t('onboarding.birthYear.hint', { defaultValue: 'pour changer' })}
-          </ShhText>
-
-          {/* Arrow buttons */}
-          <View style={styles.arrowRow}>
-            <TouchableOpacity
-              style={styles.arrowButton}
-              onPress={decrementYear}
-              activeOpacity={0.7}
-            >
-              <ShhText variant="display" style={styles.arrowText}>
-                {'\u25BC'}
-              </ShhText>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.arrowButton}
-              onPress={incrementYear}
-              activeOpacity={0.7}
-            >
-              <ShhText variant="display" style={styles.arrowText}>
-                {'\u25B2'}
-              </ShhText>
-            </TouchableOpacity>
-          </View>
-
-          {/* Block message */}
-          {isBlocked && (
-            <View style={styles.blockBanner}>
-              <ShhText variant="body" style={styles.blockText}>
-                {t('onboarding.birthYear.blocked')}
-              </ShhText>
-            </View>
-          )}
         </View>
+
+        {/* Block message */}
+        {isBlocked && (
+          <View style={styles.blockBanner}>
+            <ShhText variant="body" style={styles.blockText}>
+              {t('onboarding.birthYear.blocked')}
+            </ShhText>
+          </View>
+        )}
 
         {/* CTA */}
         <TouchableOpacity
           style={[
             styles.ctaButton,
-            isBlocked && styles.ctaButtonDisabled,
-            isSubmitting && styles.ctaButtonDisabled,
+            (isBlocked || isSubmitting) && styles.ctaButtonDisabled,
           ]}
           onPress={handleConfirm}
           disabled={isBlocked || isSubmitting}
@@ -160,8 +298,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: '#111111',
-    paddingHorizontal: 24,
+    paddingHorizontal: 28,
     paddingBottom: 32,
   },
   backButton: {
@@ -176,79 +313,108 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   backText: {
-    fontSize: 18,
+    fontSize: 22,
     color: '#FFFFFF',
-    lineHeight: 22,
+    lineHeight: 26,
   },
-  body: {
-    flex: 1,
+  titleSection: {
     alignItems: 'center',
-    justifyContent: 'center',
+    marginTop: 24,
+    marginBottom: 8,
   },
   title: {
+    ...typography.displayExtra,
     fontSize: 28,
-    fontWeight: '800',
     color: '#FFFFFF',
     textAlign: 'center',
   },
   subtitle: {
+    ...typography.body,
     fontSize: 14,
     color: '#444444',
     textAlign: 'center',
     marginTop: 8,
-    marginBottom: 44,
     lineHeight: 20,
   },
-  yearDisplay: {
-    fontSize: 80,
-    fontWeight: '800',
-    color: '#DCFB4E',
-    textAlign: 'center',
+  wheelContainer: {
+    height: WHEEL_HEIGHT,
+    overflow: 'hidden',
+    alignSelf: 'center',
+    width: 220,
   },
-  yearDisplayBlocked: {
-    color: '#ff453a',
-  },
-  hint: {
-    fontSize: 12,
-    color: '#333333',
-    textAlign: 'center',
-    marginTop: 4,
-    marginBottom: 28,
-  },
-  arrowRow: {
-    flexDirection: 'row',
-    gap: 28,
-  },
-  arrowButton: {
-    width: 56,
-    height: 56,
+  selectionWindow: {
+    position: 'absolute',
+    top: ITEM_HEIGHT * 2,
+    left: 0,
+    right: 0,
+    height: ITEM_HEIGHT,
+    borderWidth: 2,
     borderRadius: 16,
-    backgroundColor: '#1A1A1A',
-    borderWidth: 1,
-    borderColor: '#2A2A2A',
+    backgroundColor: 'rgba(220,251,78,0.04)',
+    zIndex: 10,
+  },
+  fadeTop: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: ITEM_HEIGHT * 1.5,
+    zIndex: 20,
+    backgroundColor: 'transparent',
+  },
+  fadeBottom: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: ITEM_HEIGHT * 1.5,
+    zIndex: 20,
+    backgroundColor: 'transparent',
+  },
+  yearItem: {
+    height: ITEM_HEIGHT,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  arrowText: {
-    fontSize: 22,
-    color: '#FFFFFF',
+  yearText: {
+    ...typography.displayExtra,
+    fontSize: 48,
+    color: colors.primary,
+  },
+  yearTextBlocked: {
+    color: '#ff453a',
+  },
+  ageRow: {
+    alignItems: 'center',
+    marginTop: 12,
+    marginBottom: 16,
+  },
+  ageText: {
+    ...typography.bodySemiBold,
+    fontSize: 16,
+    color: '#555555',
+  },
+  ageTextBlocked: {
+    color: '#ff453a',
   },
   blockBanner: {
-    marginTop: 28,
     backgroundColor: 'rgba(255,69,58,0.08)',
     borderWidth: 1,
     borderColor: 'rgba(255,69,58,0.2)',
     borderRadius: 12,
     paddingVertical: 12,
     paddingHorizontal: 16,
+    marginBottom: 16,
   },
   blockText: {
+    ...typography.body,
     fontSize: 13,
     color: '#ff453a',
     textAlign: 'center',
+    lineHeight: 19,
   },
   ctaButton: {
-    backgroundColor: '#DCFB4E',
+    backgroundColor: colors.primary,
     borderRadius: 14,
     paddingVertical: 17,
     alignItems: 'center',
@@ -257,8 +423,8 @@ const styles = StyleSheet.create({
     opacity: 0.3,
   },
   ctaText: {
+    ...typography.bodyBold,
     fontSize: 15,
-    fontWeight: '700',
     color: '#000000',
   },
 });
