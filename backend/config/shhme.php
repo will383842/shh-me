@@ -177,4 +177,17 @@ return [
     'supported_locales' => ['en', 'fr'],
     'default_locale' => 'en',
 
+    /*
+    |--------------------------------------------------------------------------
+    | SEO
+    |--------------------------------------------------------------------------
+    */
+
+    'seo' => [
+        'default_og_image' => 'https://shh-me.com/og-image.png',
+        'app_store_url' => 'https://apps.apple.com/app/shh-me/id0000000000',
+        'play_store_url' => 'https://play.google.com/store/apps/details?id=com.shhme.app',
+        'domain' => 'https://shh-me.com',
+    ],
+
 ];

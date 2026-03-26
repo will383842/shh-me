@@ -14,7 +14,11 @@
     },
     "ios": {
       "bundleIdentifier": "com.shhme.app",
-      "supportsTablet": false
+      "supportsTablet": false,
+      "infoPlist": {
+        "CFBundleDevelopmentRegion": "en",
+        "CFBundleLocalizations": ["en", "fr"]
+      }
     },
     "android": {
       "package": "com.shhme.app",
@@ -22,11 +26,17 @@
         "backgroundColor": "#DCFB4E"
       }
     },
+    "locales": {
+      "en": "./store/ios/en/metadata.json",
+      "fr": "./store/ios/fr/metadata.json"
+    },
+    "primaryColor": "#DCFB4E",
     "plugins": [
       "expo-secure-store",
       "expo-camera",
       "expo-image",
-      "expo-font"
+      "expo-font",
+      "expo-localization"
     ]
   }
 }

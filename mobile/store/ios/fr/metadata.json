@@ -1,0 +1,14 @@
+{
+  "name": "Shh Me — Crush Anonyme",
+  "subtitle": "Quelqu'un a un secret pour toi",
+  "description": "Quelqu'un pense a toi en ce moment. Cette personne t'a envoye son battement de coeur — anonymement.\n\nC'EST QUOI SHH ME ?\nShh Me est une app de crush anonyme. Envoie un \"shh\" (battement de 3 secondes) a quelqu'un. La personne recoit des messages vocaux filtres, des photos floues qui se debrouillent jour apres jour, et des indices quotidiens. Jusqu'au reveal mutuel.\n\nCOMMENT CA MARCHE\n• Maintiens 3 secondes pour envoyer ton battement de coeur\n• Echange des messages anonymes\n• Envoie des messages vocaux filtres (ton identite reste cachee)\n• Ta photo se defloute progressivement — 5 niveaux de mystere\n• Recois 2 indices par jour (question du matin + indice de l'apres-midi)\n• Vous appuyez tous les deux sur \"Reveal\" → numeros echanges → Connectes\n\nVIE PRIVEE D'ABORD\n• Identite de l'expediteur chiffree (AES-256) dans une base separee\n• Zero tracking tiers\n• Pas de pub. Pas de donnees vendues. Jamais.\n• 18+ uniquement. Contenu modere par IA.\n• Conforme RGPD & CCPA\n\nFONCTIONNALITES UNIQUES\n• \"Le Souffle\" — voix filtree qui cache l'identite mais preserve l'emotion\n• Flou photo progressif — 5 niveaux, un par echange\n• Indices quotidiens — generes par IA, jamais les memes\n• Compte a rebours de 5 secondes pour le reveal — annulable a tout moment\n• Video de reveal de 12 secondes a partager\n• Mode hors ligne — les messages se synchronisent au retour\n\nTelechargement gratuit. Aucun abonnement requis.",
+  "keywords": "anonyme,crush,secret,admirateur,rencontre,mystere,voix,filtre,flou,photo,reveal,battement,shh,amour",
+  "promotional_text": "Quelqu'un a un secret pour toi. Decouvre qui.",
+  "privacy_url": "https://shh-me.com/privacy",
+  "support_url": "https://shh-me.com/contact",
+  "marketing_url": "https://shh-me.com",
+  "category": "Social Networking",
+  "secondary_category": "Entertainment",
+  "age_rating": "17+",
+  "copyright": "© 2026 Shh Me"
+}

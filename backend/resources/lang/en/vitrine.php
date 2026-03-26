@@ -1,0 +1,26 @@
+<?php
+
+return [
+    'hero_title' => 'Someone is thinking about you. Right now. 🤫',
+    'hero_subtitle' => 'Send an anonymous heartbeat. Filtered voice. Blurred photo. Discover who, day by day.',
+    'hero_cta' => 'Download Free',
+    'how_it_works' => 'How it works',
+    'step1_title' => 'Send a shh',
+    'step1_desc' => 'Hold 3 seconds. Your heartbeat is sent anonymously.',
+    'step2_title' => 'Exchange messages',
+    'step2_desc' => 'Text, filtered voice. The photo unblurs with each exchange.',
+    'step3_title' => 'Discover who',
+    'step3_desc' => 'Both tap reveal. Numbers exchanged. 🤫 Connected.',
+    'features_title' => 'Features',
+    'feature_anonymous' => 'Completely anonymous',
+    'feature_voice' => 'Filtered voice — emotions pass, identity hidden',
+    'feature_photo' => '5-level progressive blur',
+    'feature_clues' => 'Daily clues — 2 per day',
+    'feature_reveal' => 'Mutual reveal only',
+    'feature_safe' => '18+ only. Moderated. Zero tracking.',
+    'footer_privacy' => 'Privacy Policy',
+    'footer_terms' => 'Terms of Service',
+    'footer_contact' => 'Contact',
+    'store_ios' => 'Download on the App Store',
+    'store_android' => 'Get it on Google Play',
+];

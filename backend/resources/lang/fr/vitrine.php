@@ -1,0 +1,26 @@
+<?php
+
+return [
+    'hero_title' => 'Quelqu\'un pense à toi. En ce moment. 🤫',
+    'hero_subtitle' => 'Envoie un battement de cœur anonyme. Voix filtrée. Photo floutée. Découvre qui, jour après jour.',
+    'hero_cta' => 'Télécharger gratuitement',
+    'how_it_works' => 'Comment ça marche',
+    'step1_title' => 'Envoie un shh',
+    'step1_desc' => 'Appuie 3 secondes. Ton battement de cœur est envoyé anonymement.',
+    'step2_title' => 'Échangez des messages',
+    'step2_desc' => 'Texte, voix filtrée. La photo se défloute à chaque échange.',
+    'step3_title' => 'Découvre qui',
+    'step3_desc' => 'Tous les deux appuyez sur révéler. Numéros échangés. 🤫 Connectés.',
+    'features_title' => 'Fonctionnalités',
+    'feature_anonymous' => 'Totalement anonyme',
+    'feature_voice' => 'Voix filtrée — les émotions passent, l\'identité reste cachée',
+    'feature_photo' => 'Défloutage progressif en 5 niveaux',
+    'feature_clues' => 'Indices quotidiens — 2 par jour',
+    'feature_reveal' => 'Révélation mutuelle uniquement',
+    'feature_safe' => '18+ uniquement. Modéré. Zéro tracking.',
+    'footer_privacy' => 'Politique de confidentialité',
+    'footer_terms' => 'Conditions d\'utilisation',
+    'footer_contact' => 'Contact',
+    'store_ios' => 'Télécharger sur l\'App Store',
+    'store_android' => 'Disponible sur Google Play',
+];
