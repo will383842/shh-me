@@ -135,6 +135,7 @@ return [
 
     'relance' => [
         'gentle' => 'Something sweet is waiting for you whenever you want. No rush. 🤫',
+        'morning_11h' => "You haven't answered... Your crush is waiting for their clue 🤫",
     ],
 
     /*

@@ -135,6 +135,7 @@ return [
 
     'relance' => [
         'gentle' => 'Quelque chose de doux t\'attend quand tu voudras. Pas de rush. 🤫',
+        'morning_11h' => 'Tu n\'as pas répondu… Ton crush attend son indice 🤫',
     ],
 
     /*
