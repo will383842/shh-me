@@ -25,6 +25,7 @@ import { useAuthStore } from '../../stores/useAuthStore';
 import { useSettingsStore } from '../../stores/useSettingsStore';
 import { apiRequest } from '../../services/api';
 import FeedbackSheet from '../../components/organisms/FeedbackSheet';
+import { colors } from '../../theme/colors';
 import type { RootStackParamList } from '../../types';
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
@@ -270,7 +271,7 @@ export default function SettingsScreen() {
         showsVerticalScrollIndicator={false}
       >
         {/* ─── Notifications ─── */}
-        <SectionLabel text={t('settings.notificationsSection', { defaultValue: 'NOTIFICATIONS' })} />
+        <SectionLabel text={t('settings.notificationsSection')} />
         <View style={styles.sectionGroup}>
           <SettingItem
             icon="🔔"
@@ -280,29 +281,29 @@ export default function SettingsScreen() {
           />
           <SettingItem
             icon="🤫"
-            label={t('settings.newShhNotif', { defaultValue: 'Nouveau shh reçu' })}
+            label={t('settings.newShhNotif')}
             right={<ShhToggle value={newShhNotif} onValueChange={setNewShhNotif} />}
           />
           <SettingItem
             icon="💬"
-            label={t('settings.messageNotif', { defaultValue: 'Messages' })}
+            label={t('settings.messageNotif')}
             right={<ShhToggle value={messageNotif} onValueChange={setMessageNotif} />}
           />
           <SettingItem
             icon="🎯"
-            label={t('settings.guessNotif', { defaultValue: 'Tentatives de devinette' })}
+            label={t('settings.guessNotif')}
             isLast
             right={<ShhToggle value={guessNotif} onValueChange={setGuessNotif} />}
           />
         </View>
 
         {/* ─── Confidentialité ─── */}
-        <SectionLabel text={t('settings.privacySection', { defaultValue: 'CONFIDENTIALITÉ' })} />
+        <SectionLabel text={t('settings.privacySection')} />
         <View style={styles.sectionGroup}>
           <SettingItem
             icon="👻"
             label={t('settings.ghost')}
-            subtitle={t('settings.ghostSubtitle', { defaultValue: 'Masque ta présence en ligne' })}
+            subtitle={t('settings.ghostSubtitle')}
             isFirst
             right={<ShhToggle value={ghostEnabled} onValueChange={handleToggleGhost} />}
           />
@@ -315,7 +316,7 @@ export default function SettingsScreen() {
         </View>
 
         {/* ─── Langue ─── */}
-        <SectionLabel text={t('settings.languageSection', { defaultValue: 'LANGUE' })} />
+        <SectionLabel text={t('settings.languageSection')} />
         <View style={styles.sectionGroup}>
           <SettingItem
             icon="🌍"
@@ -327,7 +328,7 @@ export default function SettingsScreen() {
         </View>
 
         {/* ─── Support ─── */}
-        <SectionLabel text={t('settings.supportSection', { defaultValue: 'SUPPORT' })} />
+        <SectionLabel text={t('settings.supportSection')} />
         <View style={styles.sectionGroup}>
           <SettingItem
             icon="❓"
@@ -344,25 +345,25 @@ export default function SettingsScreen() {
         </View>
 
         {/* ─── Danger Zone ─── */}
-        <SectionLabel text={t('settings.dangerSection', { defaultValue: 'ZONE DANGER' })} />
+        <SectionLabel text={t('settings.dangerSection')} />
         <View style={styles.sectionGroup}>
           <DangerItem
             icon="🚨"
             label={t('settings.panic')}
-            subtitle={t('settings.panicSubtitle', { defaultValue: 'Supprime tout et déconnecte immédiatement' })}
+            subtitle={t('settings.panicSubtitle')}
             onPress={handlePanic}
             isFirst
           />
           <DangerItem
             icon="🚪"
             label={t('settings.logout')}
-            subtitle={t('settings.logoutSubtitle', { defaultValue: 'Tu pourras te reconnecter plus tard' })}
+            subtitle={t('settings.logoutSubtitle')}
             onPress={handleLogout}
           />
           <DangerItem
             icon="💀"
             label={t('settings.deleteAccount')}
-            subtitle={t('settings.deleteSubtitle', { defaultValue: 'Irréversible — toutes les données seront supprimées' })}
+            subtitle={t('settings.deleteSubtitle')}
             onPress={handleDeleteAccount}
             isLast
           />
@@ -380,7 +381,7 @@ export default function SettingsScreen() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#DCFB4E',
+    backgroundColor: colors.primary,
   },
 
   /* ─── Header ─── */
@@ -394,20 +395,20 @@ const styles = StyleSheet.create({
   backButton: {
     width: 40,
     height: 40,
-    backgroundColor: 'rgba(0,0,0,0.1)',
+    backgroundColor: colors.cardLight,
     borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
   },
   backArrow: {
     fontSize: 22,
-    color: '#000000',
+    color: colors.black,
     marginTop: -2,
   },
   headerTitle: {
     fontSize: 20,
     fontWeight: '800',
-    color: '#000000',
+    color: colors.black,
   },
 
   /* ─── Scroll ─── */
@@ -426,7 +427,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     textTransform: 'uppercase',
     letterSpacing: 1.5,
-    color: 'rgba(0,0,0,0.3)',
+    color: colors.blackAlpha30,
     marginBottom: 8,
     marginTop: 24,
     marginLeft: 4,
@@ -440,7 +441,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: 'rgba(0,0,0,0.09)',
+    backgroundColor: colors.blackAlpha09,
     paddingVertical: 14,
     paddingHorizontal: 16,
     marginBottom: 1,
@@ -470,16 +471,16 @@ const styles = StyleSheet.create({
   itemLabel: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#000000',
+    color: colors.black,
   },
   itemSubtitle: {
     fontSize: 11,
-    color: '#555555',
+    color: colors.gray,
     marginTop: 2,
   },
   itemArrow: {
     fontSize: 18,
-    color: 'rgba(0,0,0,0.25)',
+    color: colors.blackAlpha25,
     marginLeft: 8,
   },
 
@@ -492,11 +493,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 3,
   },
   toggleTrackOn: {
-    backgroundColor: '#000000',
+    backgroundColor: colors.black,
     alignItems: 'flex-end',
   },
   toggleTrackOff: {
-    backgroundColor: 'rgba(0,0,0,0.15)',
+    backgroundColor: colors.blackAlpha15,
     alignItems: 'flex-start',
   },
   toggleThumb: {
@@ -505,10 +506,10 @@ const styles = StyleSheet.create({
     borderRadius: 11,
   },
   toggleThumbOn: {
-    backgroundColor: '#DCFB4E',
+    backgroundColor: colors.primary,
   },
   toggleThumbOff: {
-    backgroundColor: '#999999',
+    backgroundColor: colors.grayLight,
   },
 
   /* ─── Danger items ─── */
@@ -516,9 +517,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: 'rgba(255,69,58,0.06)',
+    backgroundColor: colors.dangerAlpha06,
     borderWidth: 1,
-    borderColor: 'rgba(255,69,58,0.15)',
+    borderColor: colors.dangerAlpha15,
     paddingVertical: 14,
     paddingHorizontal: 16,
     marginBottom: 1,
@@ -530,16 +531,16 @@ const styles = StyleSheet.create({
   dangerLabel: {
     fontSize: 14,
     fontWeight: '700',
-    color: '#ff453a',
+    color: colors.danger,
   },
   dangerSubtitle: {
     fontSize: 11,
-    color: 'rgba(255,69,58,0.6)',
+    color: colors.dangerAlpha60,
     marginTop: 2,
   },
   dangerArrow: {
     fontSize: 18,
-    color: 'rgba(255,69,58,0.4)',
+    color: colors.dangerAlpha40,
     marginLeft: 8,
   },
 });

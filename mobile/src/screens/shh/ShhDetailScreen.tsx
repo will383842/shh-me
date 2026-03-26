@@ -1,6 +1,7 @@
 /**
- * ShhDetailScreen — Immersive 2026 conversation view for a single shh.
- * Yellow bg, blur photo, guess chips, messages FlatList, input bar.
+ * ShhDetailScreen — Immersive conversation view for a single shh.
+ * Uses ShhMessageBubble, ShhGuessGame, ShhQuickReplies components.
+ * Branches report.ts service for reporting.
  */
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import {
@@ -11,7 +12,6 @@ import {
   KeyboardAvoidingView,
   Platform,
   StyleSheet,
-  ScrollView,
 } from 'react-native';
 import Animated, {
   useSharedValue,
@@ -21,6 +21,7 @@ import Animated, {
   withTiming,
   Easing,
 } from 'react-native-reanimated';
+import * as Haptics from 'expo-haptics';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import type { RouteProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -28,9 +29,16 @@ import { useTranslation } from 'react-i18next';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ShhText from '../../components/atoms/ShhText';
 import ShhSkeleton from '../../components/atoms/ShhSkeleton';
+import ShhMessageBubble from '../../components/molecules/ShhMessageBubble';
+import ShhQuickReplies from '../../components/molecules/ShhQuickReplies';
+import ShhGuessGame from '../../components/organisms/ShhGuessGame';
 import { useShhStore } from '../../stores/useShhStore';
 import { useBlurLevel } from '../../hooks/useBlurLevel';
 import { useAuthStore } from '../../stores/useAuthStore';
+import { submitReport } from '../../services/report';
+import { maybeRequestReview } from '../../services/ReviewService';
+import * as HappinessScore from '../../services/HappinessScore';
+import { colors } from '../../theme/colors';
 import type { ShhMessage, RootStackParamList } from '../../types';
 
 type DetailRoute = RouteProp<RootStackParamList, 'ShhDetail'>;
@@ -38,20 +46,11 @@ type Nav = NativeStackNavigationProp<RootStackParamList>;
 
 /* ─── Demo messages ─── */
 const DEMO_MESSAGES: ShhMessage[] = [
-  { id: '1', shh_id: 'demo', sender_id: 'other', content: 'Hey… je pense à toi 🤫', type: 'text', created_at: '2026-03-24T10:00:00Z', reaction: null },
-  { id: '2', shh_id: 'demo', sender_id: 'me', content: 'Qui es-tu ?! 😏', type: 'text', created_at: '2026-03-24T10:02:00Z', reaction: '❤️' },
-  { id: '3', shh_id: 'demo', sender_id: 'other', content: 'Tu le sauras bientôt…', type: 'text', created_at: '2026-03-24T10:05:00Z', reaction: null },
+  { id: '1', shh_id: 'demo', sender_id: 'other', content: 'Hey\u2026 je pense \u00e0 toi \uD83E\uDD2B', type: 'text', created_at: '2026-03-24T10:00:00Z', reaction: null },
+  { id: '2', shh_id: 'demo', sender_id: 'me', content: 'Qui es-tu ?! \uD83D\uDE0F', type: 'text', created_at: '2026-03-24T10:02:00Z', reaction: '\u2764\uFE0F' },
+  { id: '3', shh_id: 'demo', sender_id: 'other', content: 'Tu le sauras bient\u00f4t\u2026', type: 'text', created_at: '2026-03-24T10:05:00Z', reaction: null },
   { id: '4', shh_id: 'demo', sender_id: 'me', content: 'Donne-moi un indice !', type: 'text', created_at: '2026-03-25T09:00:00Z', reaction: null },
-  { id: '5', shh_id: 'demo', sender_id: 'other', content: 'On se voit souvent 👀', type: 'text', created_at: '2026-03-25T09:03:00Z', reaction: '🔥' },
-];
-
-/* ─── Demo guess contacts ─── */
-const DEMO_GUESSES = [
-  { id: '1', name: 'Léa', initials: 'LM' },
-  { id: '2', name: 'Hugo', initials: 'HD' },
-  { id: '3', name: 'Camille', initials: 'CR' },
-  { id: '4', name: 'Nathan', initials: 'NP' },
-  { id: '5', name: 'Emma', initials: 'EB' },
+  { id: '5', shh_id: 'demo', sender_id: 'other', content: 'On se voit souvent \uD83D\uDC40', type: 'text', created_at: '2026-03-25T09:03:00Z', reaction: '\uD83D\uDD25' },
 ];
 
 /* ─── Heartbeat BPM pill ─── */
@@ -59,7 +58,7 @@ function BpmPill({ bpm }: { bpm: number }) {
   const scale = useSharedValue(1);
 
   useEffect(() => {
-    const interval = 60000 / bpm; // ms per beat
+    const interval = 60000 / bpm;
     scale.value = withRepeat(
       withSequence(
         withTiming(1.15, { duration: interval * 0.15, easing: Easing.out(Easing.ease) }),
@@ -79,7 +78,7 @@ function BpmPill({ bpm }: { bpm: number }) {
   return (
     <Animated.View style={[styles.bpmPill, animStyle]}>
       <ShhText variant="display" style={styles.bpmText}>
-        {`♥ ${bpm} bpm`}
+        {`\u2665 ${bpm} bpm`}
       </ShhText>
     </Animated.View>
   );
@@ -97,26 +96,40 @@ export default function ShhDetailScreen() {
 
   const [input, setInput] = useState('');
   const flatListRef = useRef<FlatList<ShhMessage>>(null);
+  const unblurCountRef = useRef(0);
 
   const blurLevel = useBlurLevel(currentShh?.exchange_count ?? 0);
-  const isReceiver = currentShh?.receiver_id === token;
+  const prevBlurRef = useRef(blurLevel);
 
-  // Use demo messages when store is empty
   const messages = storeMessages.length > 0 ? storeMessages : DEMO_MESSAGES;
   const bpm = currentShh?.bpm ?? 94;
-  const dayCount = 2;
+  const dayCount = currentShh?.exchange_count ?? 2;
   const blurDots = 5;
-  const currentBlurDot = 3; // demo: 3 out of 5 done
+  const currentBlurDot = Math.min(5, Math.max(0, 5 - Math.floor(blurLevel / 10)));
 
   useEffect(() => {
     void fetchShhDetail(shhId);
   }, [shhId, fetchShhDetail]);
 
+  // Track photo unblur events for ReviewService
+  useEffect(() => {
+    if (prevBlurRef.current !== blurLevel && blurLevel < prevBlurRef.current) {
+      unblurCountRef.current += 1;
+      HappinessScore.track('photo_unblurred');
+      if (unblurCountRef.current >= 3) {
+        void maybeRequestReview('shh_sent');
+      }
+    }
+    prevBlurRef.current = blurLevel;
+  }, [blurLevel]);
+
   const handleSend = useCallback(
     (content: string) => {
       if (!content.trim()) return;
+      void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
       void sendMessage(shhId, content.trim());
       setInput('');
+      HappinessScore.track('message_sent');
     },
     [shhId, sendMessage],
   );
@@ -125,15 +138,23 @@ export default function ShhDetailScreen() {
     handleSend(input);
   }, [input, handleSend]);
 
+  const handleReport = useCallback(async () => {
+    if (!token) return;
+    void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+    try {
+      await submitReport('shh', shhId, 'inappropriate', token);
+    } catch {
+      // silent fail
+    }
+  }, [shhId, token]);
+
   const renderMessage = useCallback(
     ({ item, index }: { item: ShhMessage; index: number }) => {
       const isSent = item.sender_id === 'me' || item.sender_id !== (currentShh?.receiver_id ?? 'other');
-      const time = new Date(item.created_at);
-      const timeStr = `${time.getHours().toString().padStart(2, '0')}:${time.getMinutes().toString().padStart(2, '0')}`;
 
-      // Day separator logic
+      // Day separator
       const prevItem = index > 0 ? messages[index - 1] : null;
-      const currentDay = time.toDateString();
+      const currentDay = new Date(item.created_at).toDateString();
       const prevDay = prevItem ? new Date(prevItem.created_at).toDateString() : null;
       const showDaySep = currentDay !== prevDay;
 
@@ -143,26 +164,18 @@ export default function ShhDetailScreen() {
             <View style={styles.daySeparator}>
               <ShhText variant="body" style={styles.daySeparatorText}>
                 {currentDay === new Date().toDateString()
-                  ? t('shh.message.today', { defaultValue: "Aujourd'hui" })
-                  : time.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })}
+                  ? t('shh.detail.today')
+                  : new Date(item.created_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })}
               </ShhText>
             </View>
           )}
-          <View style={[styles.bubbleRow, isSent && styles.bubbleRowSent]}>
-            <View style={[styles.bubble, isSent ? styles.bubbleSent : styles.bubbleReceived]}>
-              <ShhText variant="body" style={[styles.bubbleText, isSent && styles.bubbleTextSent]}>
-                {item.content}
-              </ShhText>
-              <ShhText variant="body" style={[styles.bubbleTime, isSent && styles.bubbleTimeSent]}>
-                {timeStr}
-              </ShhText>
-            </View>
-            {item.reaction && (
-              <ShhText variant="body" style={[styles.reaction, isSent && styles.reactionSent]}>
-                {item.reaction}
-              </ShhText>
-            )}
-          </View>
+          <ShhMessageBubble
+            content={item.content}
+            isSender={isSent}
+            reaction={item.reaction}
+            timestamp={item.created_at}
+            onDoubleTap={() => void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)}
+          />
         </View>
       );
     },
@@ -185,19 +198,19 @@ export default function ShhDetailScreen() {
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
-      {/* ─── Nav bar ─── */}
+      {/* Nav bar */}
       <View style={styles.navBar}>
         <TouchableOpacity
           style={styles.backButton}
           onPress={() => navigation.goBack()}
           activeOpacity={0.7}
         >
-          <ShhText variant="body" style={styles.backArrow}>{'‹'}</ShhText>
+          <ShhText variant="body" style={styles.backArrow}>{'\u2039'}</ShhText>
         </TouchableOpacity>
 
         <View style={styles.anonPill}>
           <ShhText variant="body" style={styles.anonText}>
-            {`🤫 ${t('shh.detail.anonymous', { defaultValue: 'Anonyme' })} · ${t('shh.detail.day', { defaultValue: 'Jour' })} ${dayCount}`}
+            {`\uD83E\uDD2B ${t('shh.detail.anonymous')} \u00B7 ${t('shh.detail.day')} ${dayCount}`}
           </ShhText>
         </View>
 
@@ -209,19 +222,17 @@ export default function ShhDetailScreen() {
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         keyboardVerticalOffset={0}
       >
-        {/* ─── Photo ─── */}
+        {/* Photo */}
         <View style={styles.photoWrapper}>
           <View style={styles.photoPlaceholder}>
-            <ShhText variant="body" style={styles.photoEmoji}>{'🤫'}</ShhText>
+            <ShhText variant="body" style={styles.photoEmoji}>{'\uD83E\uDD2B'}</ShhText>
 
-            {/* Blur level badge */}
             <View style={styles.blurBadge}>
               <ShhText variant="body" style={styles.blurBadgeText}>
-                {t('shh.detail.blurLevel', { defaultValue: 'Flou' })} {blurLevel}%
+                {t('shh.detail.blurLevel')} {blurLevel}%
               </ShhText>
             </View>
 
-            {/* Blur dots */}
             <View style={styles.blurDots}>
               {Array.from({ length: blurDots }).map((_, i) => (
                 <View
@@ -236,35 +247,21 @@ export default function ShhDetailScreen() {
           </View>
         </View>
 
-        {/* ─── Expiry strip ─── */}
+        {/* Expiry strip */}
         <View style={styles.expiryStrip}>
           <ShhText variant="body" style={styles.expiryText}>
-            {'⏳ '}
+            {'\u23F3 '}
             <ShhText variant="body" style={styles.expiryItalic}>
-              {t('shh.detail.expires', { defaultValue: 'Expire dans' })}
+              {t('shh.detail.expires')}
             </ShhText>
             {'  23h 14min'}
           </ShhText>
         </View>
 
-        {/* ─── Guess section ─── */}
-        <View style={styles.guessSection}>
-          <ShhText variant="body" style={styles.guessTitle}>
-            {t('shh.detail.guessTitle', { defaultValue: 'À ton avis, c\'est qui ? 🤫' })}
-          </ShhText>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.guessScroll}>
-            {DEMO_GUESSES.map((g) => (
-              <TouchableOpacity key={g.id} style={styles.guessChip} activeOpacity={0.7}>
-                <View style={styles.guessAvatar}>
-                  <ShhText variant="body" style={styles.guessInitials}>{g.initials}</ShhText>
-                </View>
-                <ShhText variant="body" style={styles.guessName}>{g.name}</ShhText>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
-        </View>
+        {/* Guess game component */}
+        <ShhGuessGame shhId={shhId} />
 
-        {/* ─── Messages ─── */}
+        {/* Messages */}
         <FlatList
           ref={flatListRef}
           data={messages}
@@ -278,15 +275,27 @@ export default function ShhDetailScreen() {
           style={styles.flex1}
         />
 
-        {/* ─── Input bar ─── */}
+        {/* Quick replies */}
+        <ShhQuickReplies shhId={shhId} onSend={handleSend} />
+
+        {/* Input bar */}
         <View style={styles.inputBar}>
+          {/* Report button */}
+          <TouchableOpacity
+            style={styles.reportButton}
+            onPress={handleReport}
+            activeOpacity={0.7}
+          >
+            <ShhText variant="body" style={styles.reportIcon}>{'\u26A0\uFE0F'}</ShhText>
+          </TouchableOpacity>
+
           <View style={styles.inputWrapper}>
             <TextInput
               style={styles.textInput}
               value={input}
               onChangeText={setInput}
-              placeholder={t('shh.message.placeholder', { defaultValue: 'Message…' })}
-              placeholderTextColor="rgba(0,0,0,0.3)"
+              placeholder={t('shh.message.placeholder')}
+              placeholderTextColor={colors.blackAlpha30}
               maxLength={200}
               multiline
             />
@@ -297,7 +306,7 @@ export default function ShhDetailScreen() {
             disabled={!input.trim()}
             activeOpacity={0.7}
           >
-            <ShhText variant="body" style={styles.sendIcon}>{'↑'}</ShhText>
+            <ShhText variant="body" style={styles.sendIcon}>{'\u2191'}</ShhText>
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
@@ -308,14 +317,14 @@ export default function ShhDetailScreen() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#DCFB4E',
+    backgroundColor: colors.primary,
   },
   flex1: {
     flex: 1,
   },
   loadingSafe: {
     flex: 1,
-    backgroundColor: '#DCFB4E',
+    backgroundColor: colors.primary,
   },
   loadingContainer: {
     flex: 1,
@@ -324,7 +333,6 @@ const styles = StyleSheet.create({
     gap: 24,
   },
 
-  /* ─── Nav ─── */
   navBar: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -335,18 +343,18 @@ const styles = StyleSheet.create({
   backButton: {
     width: 40,
     height: 40,
-    backgroundColor: 'rgba(0,0,0,0.1)',
+    backgroundColor: colors.cardLight,
     borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
   },
   backArrow: {
     fontSize: 22,
-    color: '#000000',
+    color: colors.black,
     marginTop: -2,
   },
   anonPill: {
-    backgroundColor: 'rgba(0,0,0,0.09)',
+    backgroundColor: colors.cardLight,
     borderRadius: 20,
     paddingVertical: 7,
     paddingHorizontal: 14,
@@ -354,10 +362,10 @@ const styles = StyleSheet.create({
   anonText: {
     fontSize: 12,
     fontWeight: '700',
-    color: '#000000',
+    color: colors.black,
   },
   bpmPill: {
-    backgroundColor: 'rgba(0,0,0,0.09)',
+    backgroundColor: colors.cardLight,
     borderRadius: 20,
     paddingVertical: 7,
     paddingHorizontal: 14,
@@ -365,10 +373,9 @@ const styles = StyleSheet.create({
   bpmText: {
     fontSize: 12,
     fontWeight: '700',
-    color: '#000000',
+    color: colors.black,
   },
 
-  /* ─── Photo ─── */
   photoWrapper: {
     marginHorizontal: 16,
     marginTop: 4,
@@ -376,7 +383,7 @@ const styles = StyleSheet.create({
   photoPlaceholder: {
     width: '100%',
     aspectRatio: 1,
-    backgroundColor: '#1A1A1A',
+    backgroundColor: colors.cardDark,
     borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
@@ -389,7 +396,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 14,
     right: 14,
-    backgroundColor: 'rgba(0,0,0,0.6)',
+    backgroundColor: colors.blackAlpha60,
     borderRadius: 10,
     paddingVertical: 5,
     paddingHorizontal: 10,
@@ -397,7 +404,7 @@ const styles = StyleSheet.create({
   blurBadgeText: {
     fontSize: 11,
     fontWeight: '700',
-    color: '#DCFB4E',
+    color: colors.primary,
   },
   blurDots: {
     position: 'absolute',
@@ -412,15 +419,14 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   blurDotDone: {
-    backgroundColor: '#DCFB4E',
+    backgroundColor: colors.primary,
   },
   blurDotTodo: {
-    backgroundColor: 'rgba(0,0,0,0.25)',
+    backgroundColor: colors.blackAlpha25,
   },
 
-  /* ─── Expiry ─── */
   expiryStrip: {
-    backgroundColor: 'rgba(0,0,0,0.08)',
+    backgroundColor: colors.cardLight,
     borderRadius: 10,
     paddingVertical: 8,
     paddingHorizontal: 14,
@@ -429,57 +435,14 @@ const styles = StyleSheet.create({
   },
   expiryText: {
     fontSize: 12,
-    color: '#000000',
+    color: colors.black,
   },
   expiryItalic: {
     fontSize: 12,
     fontStyle: 'italic',
-    color: 'rgba(0,0,0,0.6)',
+    color: colors.blackAlpha60,
   },
 
-  /* ─── Guess ─── */
-  guessSection: {
-    backgroundColor: 'rgba(0,0,0,0.08)',
-    borderRadius: 14,
-    padding: 12,
-    marginHorizontal: 16,
-    marginTop: 10,
-    marginBottom: 8,
-  },
-  guessTitle: {
-    fontSize: 13,
-    fontWeight: '700',
-    color: '#000000',
-    marginBottom: 10,
-  },
-  guessScroll: {
-    flexDirection: 'row',
-  },
-  guessChip: {
-    alignItems: 'center',
-    marginRight: 14,
-  },
-  guessAvatar: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: 'rgba(0,0,0,0.12)',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 4,
-  },
-  guessInitials: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: '#000000',
-  },
-  guessName: {
-    fontSize: 9,
-    fontWeight: '600',
-    color: '#000000',
-  },
-
-  /* ─── Messages ─── */
   messagesList: {
     paddingHorizontal: 16,
     paddingVertical: 8,
@@ -490,83 +453,37 @@ const styles = StyleSheet.create({
   },
   daySeparatorText: {
     fontSize: 11,
-    color: 'rgba(0,0,0,0.3)',
-  },
-  bubbleRow: {
-    flexDirection: 'column',
-    alignItems: 'flex-start',
-    marginBottom: 8,
-  },
-  bubbleRowSent: {
-    alignItems: 'flex-end',
-  },
-  bubble: {
-    maxWidth: '78%',
-    paddingVertical: 10,
-    paddingHorizontal: 14,
-  },
-  bubbleReceived: {
-    backgroundColor: 'rgba(0,0,0,0.09)',
-    borderTopLeftRadius: 18,
-    borderTopRightRadius: 18,
-    borderBottomRightRadius: 18,
-    borderBottomLeftRadius: 4,
-  },
-  bubbleSent: {
-    backgroundColor: '#000000',
-    borderTopLeftRadius: 18,
-    borderTopRightRadius: 18,
-    borderBottomLeftRadius: 18,
-    borderBottomRightRadius: 4,
-  },
-  bubbleText: {
-    fontSize: 14,
-    color: '#000000',
-    lineHeight: 20,
-  },
-  bubbleTextSent: {
-    color: '#DCFB4E',
-  },
-  bubbleTime: {
-    fontSize: 10,
-    color: 'rgba(0,0,0,0.4)',
-    marginTop: 4,
-    alignSelf: 'flex-end',
-  },
-  bubbleTimeSent: {
-    color: 'rgba(220,251,78,0.5)',
-  },
-  reaction: {
-    fontSize: 13,
-    marginTop: 2,
-    marginLeft: 8,
-  },
-  reactionSent: {
-    alignSelf: 'flex-end',
-    marginRight: 8,
-    marginLeft: 0,
+    color: colors.blackAlpha30,
   },
 
-  /* ─── Input bar ─── */
   inputBar: {
     flexDirection: 'row',
     alignItems: 'flex-end',
-    backgroundColor: '#DCFB4E',
+    backgroundColor: colors.primary,
     paddingHorizontal: 14,
     paddingTop: 10,
     paddingBottom: 30,
     gap: 10,
   },
+  reportButton: {
+    width: 36,
+    height: 44,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  reportIcon: {
+    fontSize: 18,
+  },
   inputWrapper: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.09)',
+    backgroundColor: colors.cardLight,
     borderRadius: 24,
     paddingHorizontal: 16,
     paddingVertical: 12,
   },
   textInput: {
     fontSize: 14,
-    color: '#000000',
+    color: colors.black,
     maxHeight: 100,
     padding: 0,
   },
@@ -574,7 +491,7 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: '#000000',
+    backgroundColor: colors.black,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -583,7 +500,7 @@ const styles = StyleSheet.create({
   },
   sendIcon: {
     fontSize: 20,
-    color: '#DCFB4E',
+    color: colors.primary,
     fontWeight: '700',
   },
 });

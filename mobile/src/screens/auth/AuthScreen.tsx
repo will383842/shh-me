@@ -146,7 +146,7 @@ export default function AuthScreen() {
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[styles.buttonDemo, { backgroundColor: '#1A1A1A', borderWidth: 1, borderColor: colors.primary }]}
+                style={[styles.buttonDemo, { backgroundColor: colors.cardDark, borderWidth: 1, borderColor: colors.primary }]}
                 activeOpacity={0.8}
                 onPress={() => {
                   useAuthStore.getState().setToken('demo-token');
@@ -158,7 +158,7 @@ export default function AuthScreen() {
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[styles.buttonDemo, { backgroundColor: '#1A1A1A', borderWidth: 1, borderColor: colors.primary }]}
+                style={[styles.buttonDemo, { backgroundColor: colors.cardDark, borderWidth: 1, borderColor: colors.primary }]}
                 activeOpacity={0.8}
                 onPress={() => {
                   useAuthStore.getState().setToken('demo-token');
@@ -170,7 +170,7 @@ export default function AuthScreen() {
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[styles.buttonDemo, { backgroundColor: '#1A1A1A', borderWidth: 1, borderColor: colors.primary }]}
+                style={[styles.buttonDemo, { backgroundColor: colors.cardDark, borderWidth: 1, borderColor: colors.primary }]}
                 activeOpacity={0.8}
                 onPress={() => {
                   useAuthStore.getState().setToken('demo-token');
@@ -182,7 +182,7 @@ export default function AuthScreen() {
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[styles.buttonDemo, { backgroundColor: '#1A1A1A', borderWidth: 1, borderColor: colors.primary }]}
+                style={[styles.buttonDemo, { backgroundColor: colors.cardDark, borderWidth: 1, borderColor: colors.primary }]}
                 activeOpacity={0.8}
                 onPress={() => {
                   useAuthStore.getState().setToken('demo-token');
@@ -222,7 +222,7 @@ export default function AuthScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#111111',
+    backgroundColor: colors.dark,
     justifyContent: 'center',
     paddingHorizontal: 28,
   },
@@ -243,7 +243,7 @@ const styles = StyleSheet.create({
   subtitle: {
     ...typography.body,
     fontSize: 14,
-    color: '#444444',
+    color: colors.grayDark,
     textAlign: 'center',
     lineHeight: 22.4, // 14 * 1.6
     marginBottom: 36,
@@ -298,13 +298,13 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: '#222222',
+    borderColor: colors.borderDark,
     paddingVertical: 15,
   },
   buttonEmailText: {
     ...typography.body,
     fontSize: 14,
-    color: '#444444',
+    color: colors.grayDark,
   },
   // Demo button
   buttonDemo: {
@@ -324,13 +324,13 @@ const styles = StyleSheet.create({
   legal: {
     ...typography.body,
     fontSize: 11,
-    color: '#2a2a2a',
+    color: colors.borderDark,
     textAlign: 'center',
     marginTop: 20,
     lineHeight: 16,
   },
   legalLink: {
     textDecorationLine: 'underline',
-    color: '#2a2a2a',
+    color: colors.borderDark,
   },
 });

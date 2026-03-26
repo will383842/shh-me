@@ -25,6 +25,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { useTranslation } from 'react-i18next';
 import ShhText from '../atoms/ShhText';
+import { colors } from '../../theme/colors';
 import { apiRequest } from '../../services/api';
 import { useAuthStore } from '../../stores/useAuthStore';
 import { usePostHog } from '../../hooks/usePostHog';
@@ -165,7 +166,7 @@ export default function FeedbackSheet({ visible, onClose }: FeedbackSheetProps) 
           <TextInput
             style={styles.textInput}
             placeholder={t('feedback.optional_message')}
-            placeholderTextColor="rgba(255,255,255,0.3)"
+            placeholderTextColor={colors.whiteAlpha30}
             value={message}
             onChangeText={(text) => setMessage(text.slice(0, MAX_MESSAGE_LENGTH))}
             maxLength={MAX_MESSAGE_LENGTH}
@@ -207,16 +208,16 @@ const styles = StyleSheet.create({
   },
   backdrop: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.6)',
+    backgroundColor: colors.blackAlpha60,
   },
   sheet: {
-    backgroundColor: '#1A1A1A',
+    backgroundColor: colors.cardDark,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     paddingHorizontal: 20,
     paddingBottom: 40,
     borderTopWidth: 1,
-    borderColor: '#2A2A2A',
+    borderColor: colors.borderDark,
   },
   handleContainer: {
     alignItems: 'center',
@@ -226,12 +227,12 @@ const styles = StyleSheet.create({
     width: 40,
     height: 4,
     borderRadius: 2,
-    backgroundColor: 'rgba(255,255,255,0.2)',
+    backgroundColor: colors.whiteAlpha20,
   },
   title: {
     fontSize: 22,
     fontWeight: '800',
-    color: '#FFFFFF',
+    color: colors.white,
     textAlign: 'center',
     marginBottom: 20,
   },
@@ -242,7 +243,7 @@ const styles = StyleSheet.create({
   },
   categoryButton: {
     flex: 1,
-    backgroundColor: '#2A2A2A',
+    backgroundColor: colors.borderDark,
     borderRadius: 14,
     paddingVertical: 14,
     paddingHorizontal: 8,
@@ -251,8 +252,8 @@ const styles = StyleSheet.create({
     borderColor: 'transparent',
   },
   categoryButtonSelected: {
-    borderColor: '#DCFB4E',
-    backgroundColor: 'rgba(220,251,78,0.08)',
+    borderColor: colors.primary,
+    backgroundColor: colors.primaryAlpha08,
   },
   categoryEmoji: {
     fontSize: 24,
@@ -261,31 +262,31 @@ const styles = StyleSheet.create({
   categoryLabel: {
     fontSize: 11,
     fontWeight: '600',
-    color: 'rgba(255,255,255,0.6)',
+    color: colors.whiteAlpha60,
     textAlign: 'center',
   },
   categoryLabelSelected: {
-    color: '#DCFB4E',
+    color: colors.primary,
   },
   textInput: {
-    backgroundColor: '#2A2A2A',
+    backgroundColor: colors.borderDark,
     borderRadius: 12,
     padding: 14,
-    color: '#FFFFFF',
+    color: colors.white,
     fontSize: 14,
     minHeight: 100,
     borderWidth: 1,
-    borderColor: '#333333',
+    borderColor: colors.gray,
   },
   charCount: {
     fontSize: 11,
-    color: 'rgba(255,255,255,0.3)',
+    color: colors.whiteAlpha30,
     textAlign: 'right',
     marginTop: 4,
     marginBottom: 16,
   },
   sendButton: {
-    backgroundColor: '#DCFB4E',
+    backgroundColor: colors.primary,
     borderRadius: 14,
     paddingVertical: 16,
     alignItems: 'center',
@@ -296,6 +297,6 @@ const styles = StyleSheet.create({
   sendButtonText: {
     fontSize: 16,
     fontWeight: '800',
-    color: '#000000',
+    color: colors.black,
   },
 });

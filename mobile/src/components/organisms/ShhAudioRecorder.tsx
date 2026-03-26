@@ -83,7 +83,7 @@ export default function ShhAudioRecorder({
       </ShhText>
 
       <ShhText variant="body" style={styles.limitText}>
-        {t('audio.maxDuration', { defaultValue: '30 secondes maximum' })}
+        {t('audio.maxDuration')}
       </ShhText>
 
       {/* Record button */}
@@ -101,8 +101,8 @@ export default function ShhAudioRecorder({
 
       <ShhText variant="body" style={styles.hint}>
         {isRecording
-          ? t('audio.tapToStop', { defaultValue: 'Appuie pour stopper' })
-          : t('audio.tapToRecord', { defaultValue: 'Appuie pour enregistrer' })}
+          ? t('audio.tapToStop')
+          : t('audio.tapToRecord')}
       </ShhText>
     </View>
   );
@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
   },
   limitText: {
     fontSize: 12,
-    color: '#333333',
+    color: colors.gray,
     marginBottom: 32,
   },
   recordButton: {
@@ -158,16 +158,16 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     borderRadius: 12,
-    backgroundColor: '#FF3B30',
+    backgroundColor: colors.danger,
   },
   stopSquare: {
     width: 22,
     height: 22,
     borderRadius: 4,
-    backgroundColor: '#FF3B30',
+    backgroundColor: colors.danger,
   },
   hint: {
     fontSize: 12,
-    color: '#444444',
+    color: colors.grayDark,
   },
 });

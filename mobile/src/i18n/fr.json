@@ -24,7 +24,9 @@
       "title": "Quelle est ton année de naissance ?",
       "subtitle": "Shh Me est réservé aux 18 ans et plus",
       "blocked": "Shh Me est réservé aux 18 ans et plus. On se retrouve bientôt 🤫",
-      "confirm": "Continuer"
+      "confirm": "Continuer",
+      "yearsOld": "ans",
+      "accessDenied": "Accès refusé"
     }
   },
   "home": {
@@ -176,7 +178,13 @@
     "languageSection": "LANGUE",
     "supportSection": "SUPPORT",
     "dangerSection": "ZONE DANGER",
-    "panicSubtitle": "Supprime tous les shh actifs · Pause 24h"
+    "panicSubtitle": "Supprime tous les shh actifs · Pause 24h",
+    "newShhNotif": "Nouveau shh reçu",
+    "messageNotif": "Messages",
+    "guessNotif": "Tentatives de devinette",
+    "ghostSubtitle": "Masque ta présence en ligne",
+    "logoutSubtitle": "Tu pourras te reconnecter plus tard",
+    "deleteSubtitle": "Irréversible — toutes les données seront supprimées"
   },
   "profile": {
     "shhLifetime": "Shhs à vie"

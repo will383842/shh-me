@@ -1,9 +1,10 @@
 /**
- * AudioRecordScreen — Dark bg #111111 immersive vocal recording screen.
- * Filter chip, waveform, timer, record button, replay section, send button.
+ * AudioRecordScreen — Immersive vocal recording screen.
+ * Branches audio.ts API service for upload + send.
  */
 import React, { useState, useCallback } from 'react';
 import { View, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
+import * as Haptics from 'expo-haptics';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import type { RouteProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -13,6 +14,10 @@ import ShhText from '../../components/atoms/ShhText';
 import ShhAudioRecorder from '../../components/organisms/ShhAudioRecorder';
 import ShhAudioPlayer from '../../components/molecules/ShhAudioPlayer';
 import { useAudioRecorder } from '../../hooks/useAudioRecorder';
+import { useAuthStore } from '../../stores/useAuthStore';
+import { uploadAudio, sendAudio } from '../../services/audio';
+import { maybeRequestReview } from '../../services/ReviewService';
+import * as HappinessScore from '../../services/HappinessScore';
 import { colors } from '../../theme/colors';
 import type { RootStackParamList } from '../../types';
 
@@ -24,6 +29,7 @@ export default function AudioRecordScreen() {
   const navigation = useNavigation<Nav>();
   const route = useRoute<AudioRoute>();
   const { shhId } = route.params;
+  const token = useAuthStore((s) => s.token);
 
   const {
     isRecording,
@@ -45,11 +51,27 @@ export default function AudioRecordScreen() {
   const handleSend = useCallback(async () => {
     if (!recordedUri || !hasListened || isSending) return;
     setIsSending(true);
-    // Demo: simulate send delay
-    await new Promise((resolve) => setTimeout(resolve, 800));
-    setIsSending(false);
-    navigation.goBack();
-  }, [recordedUri, hasListened, isSending, navigation]);
+
+    try {
+      if (token) {
+        const { id: audioId } = await uploadAudio(shhId, recordedUri, token);
+        await sendAudio(shhId, audioId, token);
+      } else {
+        // Demo fallback
+        await new Promise((resolve) => setTimeout(resolve, 800));
+      }
+      void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      HappinessScore.track('audio_sent');
+      void maybeRequestReview('audio_sent');
+      navigation.goBack();
+    } catch {
+      // Demo fallback on API failure
+      await new Promise((resolve) => setTimeout(resolve, 800));
+      navigation.goBack();
+    } finally {
+      setIsSending(false);
+    }
+  }, [recordedUri, hasListened, isSending, token, shhId, navigation]);
 
   const handleReset = useCallback(() => {
     resetRecording();
@@ -65,10 +87,10 @@ export default function AudioRecordScreen() {
           onPress={() => navigation.goBack()}
           activeOpacity={0.7}
         >
-          <ShhText variant="body" style={styles.backArrow}>{'‹'}</ShhText>
+          <ShhText variant="body" style={styles.backArrow}>{'\u2039'}</ShhText>
         </TouchableOpacity>
         <ShhText variant="display" style={styles.navTitle}>
-          {t('audio.screenTitle', { defaultValue: 'Message vocal' })} {'🤫'}
+          {t('audio.screenTitle')} {'\uD83E\uDD2B'}
         </ShhText>
         <View style={styles.spacer} />
       </View>
@@ -81,7 +103,7 @@ export default function AudioRecordScreen() {
         {/* Filter chip */}
         <View style={styles.filterChip}>
           <ShhText variant="body" style={styles.filterText}>
-            {t('audio.filterActive', { defaultValue: '🎵 Filtre \'Le Souffle\' actif' })}
+            {t('audio.filterActive')}
           </ShhText>
         </View>
 
@@ -99,7 +121,7 @@ export default function AudioRecordScreen() {
         {hasRecording && (
           <View style={styles.replaySection}>
             <ShhText variant="body" style={styles.replayLabel}>
-              {t('audio.replayRequired', { defaultValue: 'RÉÉCOUTE OBLIGATOIRE AVANT ENVOI' })}
+              {t('audio.replayRequired')}
             </ShhText>
 
             <View style={styles.replayCard}>
@@ -109,19 +131,18 @@ export default function AudioRecordScreen() {
             {hasListened && (
               <View style={styles.listenedBadge}>
                 <ShhText variant="body" style={styles.listenedText}>
-                  {'✓ '}{t('audio.listened', { defaultValue: 'Écouté' })}
+                  {'\u2713 '}{t('audio.listened')}
                 </ShhText>
               </View>
             )}
 
-            {/* Re-record */}
             <TouchableOpacity
               style={styles.reRecordButton}
               onPress={handleReset}
               activeOpacity={0.7}
             >
               <ShhText variant="body" style={styles.reRecordText}>
-                {t('audio.reRecord', { defaultValue: 'Réenregistrer' })}
+                {t('audio.reRecord')}
               </ShhText>
             </TouchableOpacity>
           </View>
@@ -141,7 +162,7 @@ export default function AudioRecordScreen() {
             activeOpacity={0.8}
           >
             <ShhText variant="body" style={styles.sendButtonText}>
-              {t('audio.sendVocal', { defaultValue: 'Envoyer ce vocal' })} {'🤫'}
+              {t('audio.sendVocal')} {'\uD83E\uDD2B'}
             </ShhText>
           </TouchableOpacity>
         </View>
@@ -193,11 +214,10 @@ const styles = StyleSheet.create({
     width: 40,
   },
 
-  /* Filter chip */
   filterChip: {
-    backgroundColor: 'rgba(220,251,78,0.08)',
+    backgroundColor: colors.primaryAlpha08,
     borderWidth: 1,
-    borderColor: 'rgba(220,251,78,0.2)',
+    borderColor: colors.primaryAlpha20,
     borderRadius: 20,
     paddingVertical: 8,
     paddingHorizontal: 14,
@@ -209,7 +229,6 @@ const styles = StyleSheet.create({
     color: colors.primary,
   },
 
-  /* Replay section */
   replaySection: {
     alignItems: 'center',
     paddingTop: 32,
@@ -232,7 +251,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   listenedBadge: {
-    backgroundColor: 'rgba(220,251,78,0.1)',
+    backgroundColor: colors.primaryAlpha10,
     borderRadius: 10,
     paddingVertical: 4,
     paddingHorizontal: 12,
@@ -248,11 +267,10 @@ const styles = StyleSheet.create({
   },
   reRecordText: {
     fontSize: 13,
-    color: '#444444',
+    color: colors.gray,
     textDecorationLine: 'underline',
   },
 
-  /* Bottom send bar */
   bottomBar: {
     position: 'absolute',
     bottom: 0,

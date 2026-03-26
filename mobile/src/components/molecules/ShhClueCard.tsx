@@ -38,12 +38,12 @@ export default function ShhClueCard({
     <View style={styles.card}>
       <View style={styles.header}>
         <ShhText variant="body" style={styles.typeLabel}>
-          {`${config.emoji} ${t(config.labelKey, { defaultValue: type.toUpperCase() })}`}
+          {`${config.emoji} ${t(config.labelKey)}`}
         </ShhText>
         {isNew && (
           <View style={styles.newBadge}>
             <ShhText variant="body" style={styles.newBadgeText}>
-              {t('clue.new', { defaultValue: 'NOUVEAU' })}
+              {t('clue.new')}
             </ShhText>
           </View>
         )}
@@ -62,7 +62,7 @@ export default function ShhClueCard({
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: 'rgba(0,0,0,0.09)',
+    backgroundColor: colors.blackAlpha09,
     borderRadius: 14,
     padding: 16,
     marginBottom: 10,

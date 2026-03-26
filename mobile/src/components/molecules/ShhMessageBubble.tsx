@@ -69,8 +69,8 @@ export default function ShhMessageBubble({
               styles.time,
               {
                 color: isSender
-                  ? 'rgba(0,0,0,0.5)'
-                  : 'rgba(255,255,255,0.4)',
+                  ? colors.blackAlpha50
+                  : colors.whiteAlpha40,
               },
             ]}
           >

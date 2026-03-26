@@ -181,7 +181,7 @@ export default function BirthYearScreen() {
               isBlocked && styles.ageTextBlocked,
             ]}
           >
-            {age} {t('onboarding.birthYear.yearsOld', { defaultValue: 'ans' })}
+            {age} {t('onboarding.birthYear.yearsOld')}
           </Text>
         </View>
 
@@ -206,7 +206,7 @@ export default function BirthYearScreen() {
         >
           <Text style={styles.ctaText}>
             {isBlocked
-              ? `\u26D4 ${t('onboarding.birthYear.accessDenied', { defaultValue: 'Acc\u00e8s refus\u00e9' })}`
+              ? `\u26D4 ${t('onboarding.birthYear.accessDenied')}`
               : `${t('onboarding.birthYear.confirm')} \u2192`}
           </Text>
         </TouchableOpacity>
@@ -216,23 +216,23 @@ export default function BirthYearScreen() {
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: '#111111' },
+  safe: { flex: 1, backgroundColor: colors.dark },
   container: { flex: 1, paddingHorizontal: 28, paddingBottom: 32 },
 
   back: {
     width: 38, height: 38, borderRadius: 12,
-    backgroundColor: '#1A1A1A', borderWidth: 1, borderColor: '#2A2A2A',
+    backgroundColor: colors.cardDark, borderWidth: 1, borderColor: colors.borderDark,
     alignItems: 'center', justifyContent: 'center', marginTop: 8,
   },
-  backIcon: { fontSize: 22, color: '#fff', lineHeight: 26 },
+  backIcon: { fontSize: 22, color: colors.white, lineHeight: 26 },
 
   titleWrap: { alignItems: 'center', marginTop: 20, marginBottom: 4 },
   title: {
     ...typography.displayExtra, fontSize: 28,
-    color: '#fff', textAlign: 'center',
+    color: colors.white, textAlign: 'center',
   },
   subtitle: {
-    ...typography.body, fontSize: 14, color: '#444',
+    ...typography.body, fontSize: 14, color: colors.grayDark,
     textAlign: 'center', marginTop: 8, lineHeight: 20,
   },
 
@@ -247,13 +247,13 @@ const styles = StyleSheet.create({
     top: (PICKER_HEIGHT - ITEM_HEIGHT) / 2,
     left: 0, right: 0, height: ITEM_HEIGHT,
     borderTopWidth: 2, borderBottomWidth: 2,
-    borderColor: 'rgba(220,251,78,0.25)',
-    backgroundColor: 'rgba(220,251,78,0.04)',
+    borderColor: colors.primaryAlpha25,
+    backgroundColor: colors.primaryAlpha05,
     zIndex: 10,
   },
   selectionBarBlocked: {
-    borderColor: 'rgba(255,69,58,0.25)',
-    backgroundColor: 'rgba(255,69,58,0.04)',
+    borderColor: colors.dangerAlpha25,
+    backgroundColor: colors.dangerAlpha04,
   },
 
   fadeTop: {
@@ -271,13 +271,13 @@ const styles = StyleSheet.create({
     alignItems: 'center', justifyContent: 'center',
   },
   yearText: {
-    ...typography.displayExtra, fontSize: 36, color: '#333',
+    ...typography.displayExtra, fontSize: 36, color: colors.gray,
   },
   yearTextCenter: {
     fontSize: 48, color: colors.primary,
   },
   yearTextBlocked: {
-    color: '#ff453a',
+    color: colors.danger,
   },
   yearTextFaded: {
     opacity: 0.4,
@@ -285,23 +285,23 @@ const styles = StyleSheet.create({
 
   agePill: {
     alignSelf: 'center',
-    backgroundColor: 'rgba(220,251,78,0.08)',
+    backgroundColor: colors.primaryAlpha08,
     borderRadius: 20, paddingHorizontal: 18, paddingVertical: 6,
     marginBottom: 16,
   },
   ageText: {
     ...typography.bodySemiBold, fontSize: 14, color: colors.primary,
   },
-  ageTextBlocked: { color: '#ff453a' },
+  ageTextBlocked: { color: colors.danger },
 
   blockBanner: {
-    backgroundColor: 'rgba(255,69,58,0.08)',
-    borderWidth: 1, borderColor: 'rgba(255,69,58,0.2)',
+    backgroundColor: colors.dangerAlpha08,
+    borderWidth: 1, borderColor: colors.dangerAlpha20,
     borderRadius: 12, paddingVertical: 12, paddingHorizontal: 16,
     marginBottom: 16,
   },
   blockText: {
-    ...typography.body, fontSize: 13, color: '#ff453a',
+    ...typography.body, fontSize: 13, color: colors.danger,
     textAlign: 'center', lineHeight: 19,
   },
 
@@ -311,6 +311,6 @@ const styles = StyleSheet.create({
   },
   ctaDisabled: { opacity: 0.3 },
   ctaText: {
-    ...typography.bodyBold, fontSize: 15, color: '#000',
+    ...typography.bodyBold, fontSize: 15, color: colors.black,
   },
 });

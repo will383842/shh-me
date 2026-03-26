@@ -1,6 +1,6 @@
 /**
- * ConnectVideoScreen — Dark bg #111111 post-connection video screen.
- * Confetti strip, BPM, connected title, video box, action buttons.
+ * ConnectVideoScreen — Post-connection video screen.
+ * Branches ReviewService for share trigger.
  */
 import React, { useEffect, useCallback } from 'react';
 import { View, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
@@ -12,6 +12,7 @@ import Animated, {
   withTiming,
   Easing,
 } from 'react-native-reanimated';
+import * as Haptics from 'expo-haptics';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import type { RouteProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -19,6 +20,8 @@ import { useTranslation } from 'react-i18next';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ShhText from '../../components/atoms/ShhText';
 import { useShareContent } from '../../hooks/useShareContent';
+import { maybeRequestReview } from '../../services/ReviewService';
+import * as HappinessScore from '../../services/HappinessScore';
 import { colors } from '../../theme/colors';
 import type { RootStackParamList } from '../../types';
 
@@ -47,7 +50,7 @@ function ConfettiBounce() {
   return (
     <Animated.View style={style}>
       <ShhText variant="display" style={styles.confettiText}>
-        {'🎉✨🤫✨🎉'}
+        {'\uD83C\uDF89\u2728\uD83E\uDD2B\u2728\uD83C\uDF89'}
       </ShhText>
     </Animated.View>
   );
@@ -62,16 +65,18 @@ export default function ConnectVideoScreen() {
   const { shareContent, isSharing } = useShareContent();
 
   const handleSendAnother = useCallback(() => {
+    void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     navigation.navigate('SendShh');
   }, [navigation]);
 
   const handleShareVideo = useCallback(async () => {
+    void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     await shareContent({
-      caption: t('share.videoCaption', {
-        defaultValue: 'On vient de vivre un truc dingue sur Shh Me 🤫✨',
-      }),
+      caption: t('share.videoCaption'),
       uri: `demo://connect_video_${shhId}.mp4`,
     });
+    HappinessScore.track('share_completed');
+    void maybeRequestReview('share_completed');
   }, [shareContent, shhId, t]);
 
   return (
@@ -81,35 +86,27 @@ export default function ConnectVideoScreen() {
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
-        {/* Confetti strip */}
         <ConfettiBounce />
 
-        {/* BPM */}
         <ShhText variant="display" style={styles.bpmText}>
-          {'♥ 94 bpm → ∞'}
+          {'\u2665 94 bpm \u2192 \u221E'}
         </ShhText>
 
-        {/* Title */}
         <ShhText variant="display" style={styles.title}>
-          {'🤫 '}{t('connect.connected', { defaultValue: 'Connected' })}
+          {'\uD83E\uDD2B '}{t('connect.connected')}
         </ShhText>
 
-        {/* Subtitle */}
         <ShhText variant="body" style={styles.subtitle}>
-          {t('connect.videoSubtitle', {
-            defaultValue: 'Numéros échangés.\nTu viens de vivre quelque chose de rare.',
-          })}
+          {t('connect.videoSubtitle')}
         </ShhText>
 
-        {/* Video box */}
         <View style={styles.videoBox}>
-          <ShhText variant="body" style={styles.videoIcon}>{'🎬'}</ShhText>
+          <ShhText variant="body" style={styles.videoIcon}>{'\uD83C\uDFAC'}</ShhText>
           <ShhText variant="body" style={styles.videoLabel}>
-            {t('connect.videoLabel', { defaultValue: 'Vidéo souvenir · 12s' })}
+            {t('connect.videoLabel')}
           </ShhText>
         </View>
 
-        {/* Buttons */}
         <View style={styles.buttons}>
           <TouchableOpacity
             style={styles.primaryButton}
@@ -117,7 +114,7 @@ export default function ConnectVideoScreen() {
             activeOpacity={0.8}
           >
             <ShhText variant="body" style={styles.primaryButtonText}>
-              {t('connect.sendAnother', { defaultValue: 'Envoie un shh à quelqu\'un d\'autre' })} {'🤫'}
+              {t('connect.sendAnother')} {'\uD83E\uDD2B'}
             </ShhText>
           </TouchableOpacity>
 
@@ -128,7 +125,7 @@ export default function ConnectVideoScreen() {
             activeOpacity={0.7}
           >
             <ShhText variant="body" style={styles.secondaryButtonText}>
-              {'📤 '}{t('connect.shareVideo', { defaultValue: 'Partager la vidéo' })}
+              {'\uD83D\uDCE4 '}{t('connect.shareVideo')}
             </ShhText>
           </TouchableOpacity>
         </View>
@@ -152,21 +149,18 @@ const styles = StyleSheet.create({
     paddingBottom: 60,
   },
 
-  /* Confetti */
   confettiText: {
     fontSize: 36,
     textAlign: 'center',
     marginBottom: 20,
   },
 
-  /* BPM */
   bpmText: {
     fontSize: 14,
     color: colors.primary,
     marginBottom: 16,
   },
 
-  /* Title */
   title: {
     fontSize: 30,
     color: colors.primary,
@@ -174,16 +168,14 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
 
-  /* Subtitle */
   subtitle: {
     fontSize: 14,
-    color: '#444444',
+    color: colors.gray,
     textAlign: 'center',
     lineHeight: 20,
     marginBottom: 40,
   },
 
-  /* Video box */
   videoBox: {
     width: '100%',
     backgroundColor: colors.cardDark,
@@ -201,10 +193,9 @@ const styles = StyleSheet.create({
   },
   videoLabel: {
     fontSize: 14,
-    color: '#444444',
+    color: colors.gray,
   },
 
-  /* Buttons */
   buttons: {
     width: '100%',
     gap: 12,
@@ -230,6 +221,6 @@ const styles = StyleSheet.create({
   },
   secondaryButtonText: {
     fontSize: 14,
-    color: '#444444',
+    color: colors.gray,
   },
 });

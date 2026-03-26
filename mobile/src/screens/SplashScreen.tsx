@@ -166,12 +166,12 @@ export default function SplashScreen() {
         <View style={styles.ringsContainer}>
           <PulsingRing
             size={RING_OUTER_SIZE}
-            borderColor="rgba(220,251,78,0.06)"
+            borderColor={colors.primaryAlpha06}
             delay={200}
           />
           <PulsingRing
             size={RING_INNER_SIZE}
-            borderColor="rgba(220,251,78,0.15)"
+            borderColor={colors.primaryAlpha15}
             delay={0}
           />
 
@@ -182,7 +182,7 @@ export default function SplashScreen() {
         </View>
 
         {/* App name */}
-        <Animated.Text style={styles.appName}>SHH ME</Animated.Text>
+        <Animated.Text style={styles.appName}>{t('app.name').toUpperCase()}</Animated.Text>
 
         {/* Tagline */}
         <Animated.Text style={styles.tagline}>
@@ -203,7 +203,7 @@ export default function SplashScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#111111',
+    backgroundColor: colors.dark,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -230,7 +230,7 @@ const styles = StyleSheet.create({
   tagline: {
     ...typography.body,
     fontSize: 13,
-    color: '#333333',
+    color: colors.grayDark,
     marginBottom: 28,
   },
   dotsContainer: {

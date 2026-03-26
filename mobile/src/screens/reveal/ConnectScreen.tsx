@@ -1,6 +1,6 @@
 /**
- * ConnectScreen — Dark bg #111111 mutual reveal countdown screen.
- * Countdown ring, ECG line, cancel button, auto-transition to confetti state.
+ * ConnectScreen — Mutual reveal countdown.
+ * Branches useConnectPolling hook + connect.ts service.
  */
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, TouchableOpacity, StyleSheet } from 'react-native';
@@ -10,9 +10,9 @@ import Animated, {
   withRepeat,
   withSequence,
   withTiming,
-  withDelay,
   Easing,
 } from 'react-native-reanimated';
+import * as Haptics from 'expo-haptics';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import type { RouteProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -20,6 +20,11 @@ import { useTranslation } from 'react-i18next';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ShhText from '../../components/atoms/ShhText';
 import ShhConnectCountdown from '../../components/organisms/ShhConnectCountdown';
+import { useConnectPolling } from '../../hooks/useConnectPolling';
+import { useAuthStore } from '../../stores/useAuthStore';
+import { cancelConnect } from '../../services/connect';
+import { maybeRequestReview } from '../../services/ReviewService';
+import * as HappinessScore from '../../services/HappinessScore';
 import { colors } from '../../theme/colors';
 import type { RootStackParamList } from '../../types';
 
@@ -47,7 +52,6 @@ function EcgLine() {
   return (
     <View style={styles.ecgContainer}>
       <Animated.View style={[styles.ecgLine, lineStyle]}>
-        {/* Simple bar segments simulating ECG */}
         <View style={styles.ecgFlat} />
         <View style={styles.ecgPeak} />
         <View style={styles.ecgDip} />
@@ -63,7 +67,7 @@ function EcgLine() {
   );
 }
 
-/* Confetti bounce animation */
+/* Confetti bounce */
 function ConfettiStrip() {
   const bounce = useSharedValue(0);
 
@@ -85,7 +89,7 @@ function ConfettiStrip() {
   return (
     <Animated.View style={bounceStyle}>
       <ShhText variant="display" style={styles.confettiText}>
-        {'🎉✨🤫✨🎉'}
+        {'\uD83C\uDF89\u2728\uD83E\uDD2B\u2728\uD83C\uDF89'}
       </ShhText>
     </Animated.View>
   );
@@ -96,30 +100,62 @@ export default function ConnectScreen() {
   const navigation = useNavigation<Nav>();
   const route = useRoute<ConnectRoute>();
   const { shhId } = route.params;
+  const token = useAuthStore((s) => s.token);
+
+  const { status, startPolling, stopPolling } = useConnectPolling(shhId);
 
   const [countdown, setCountdown] = useState(COUNTDOWN_SECONDS);
   const [isConnected, setIsConnected] = useState(false);
   const [isActive, setIsActive] = useState(true);
 
+  // Start polling on mount
+  useEffect(() => {
+    startPolling();
+    return () => stopPolling();
+  }, [startPolling, stopPolling]);
+
+  // When polling detects mutual, trigger connected state
+  useEffect(() => {
+    if (status === 'mutual' && !isConnected) {
+      setIsConnected(true);
+      void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      HappinessScore.track('reveal_completed');
+      void maybeRequestReview('reveal_completed');
+    }
+  }, [status, isConnected]);
+
+  // Countdown timer
   useEffect(() => {
     if (!isActive || isConnected) return;
 
     if (countdown <= 0) {
       setIsConnected(true);
+      void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      HappinessScore.track('reveal_completed');
+      void maybeRequestReview('reveal_completed');
       return;
     }
 
     const timer = setTimeout(() => {
       setCountdown((prev) => prev - 1);
+      void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     }, 1000);
 
     return () => clearTimeout(timer);
   }, [countdown, isActive, isConnected]);
 
-  const handleCancel = useCallback(() => {
+  const handleCancel = useCallback(async () => {
     setIsActive(false);
+    stopPolling();
+    if (token) {
+      try {
+        await cancelConnect(shhId, token);
+      } catch {
+        // silent
+      }
+    }
     navigation.goBack();
-  }, [navigation]);
+  }, [navigation, stopPolling, token, shhId]);
 
   const handleGoToVideo = useCallback(() => {
     navigation.navigate('ConnectVideo', { shhId });
@@ -136,11 +172,11 @@ export default function ConnectScreen() {
           <ConfettiStrip />
 
           <ShhText variant="display" style={styles.connectedTitle}>
-            {'🤫 '}{t('connect.connected', { defaultValue: 'Connected' })}
+            {'\uD83E\uDD2B '}{t('connect.connected')}
           </ShhText>
 
           <ShhText variant="body" style={styles.connectedSubtitle}>
-            {t('connect.numbersExchanged', { defaultValue: 'Numéros échangés.' })}
+            {t('connect.numbersExchanged')}
           </ShhText>
 
           <View style={styles.connectedButtons}>
@@ -150,7 +186,7 @@ export default function ConnectScreen() {
               activeOpacity={0.8}
             >
               <ShhText variant="body" style={styles.videoButtonText}>
-                {t('connect.seeVideo', { defaultValue: 'Voir la vidéo souvenir' })} {'🎬'}
+                {t('connect.seeVideo')} {'\uD83C\uDFAC'}
               </ShhText>
             </TouchableOpacity>
 
@@ -160,7 +196,7 @@ export default function ConnectScreen() {
               activeOpacity={0.8}
             >
               <ShhText variant="body" style={styles.sendAnotherText}>
-                {t('connect.sendAnother', { defaultValue: 'Envoie un shh à quelqu\'un d\'autre' })} {'🤫'}
+                {t('connect.sendAnother')} {'\uD83E\uDD2B'}
               </ShhText>
             </TouchableOpacity>
           </View>
@@ -172,24 +208,18 @@ export default function ConnectScreen() {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
-        {/* Label */}
         <ShhText variant="body" style={styles.mutualLabel}>
-          {t('connect.mutualLabel', { defaultValue: 'RÉVÉLATION MUTUELLE' })}
+          {t('connect.mutualLabel')}
         </ShhText>
 
-        {/* Title */}
         <ShhText variant="display" style={styles.title}>
-          {t('connect.bothWant', { defaultValue: 'Les deux veulent se révéler' })} {'🤫'}
+          {t('connect.bothWant')} {'\uD83E\uDD2B'}
         </ShhText>
 
-        {/* Subtitle */}
         <ShhText variant="body" style={styles.subtitle}>
-          {t('connect.countdownInfo', {
-            defaultValue: 'Countdown de 5 secondes.\nTu peux annuler à tout moment.',
-          })}
+          {t('connect.countdownInfo')}
         </ShhText>
 
-        {/* Countdown ring */}
         <View style={styles.countdownWrapper}>
           <ShhConnectCountdown
             count={countdown}
@@ -198,17 +228,15 @@ export default function ConnectScreen() {
           />
         </View>
 
-        {/* ECG line */}
         <EcgLine />
 
-        {/* Cancel button */}
         <TouchableOpacity
           style={styles.cancelButton}
           onPress={handleCancel}
           activeOpacity={0.7}
         >
           <ShhText variant="body" style={styles.cancelText}>
-            {t('connect.cancel', { defaultValue: 'Annuler' })}
+            {t('connect.cancel')}
           </ShhText>
         </TouchableOpacity>
       </View>
@@ -228,7 +256,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
   },
 
-  /* Label */
   mutualLabel: {
     fontSize: 11,
     fontWeight: '700',
@@ -238,7 +265,6 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
 
-  /* Title */
   title: {
     fontSize: 28,
     color: colors.white,
@@ -246,21 +272,18 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
 
-  /* Subtitle */
   subtitle: {
     fontSize: 14,
-    color: '#444444',
+    color: colors.gray,
     textAlign: 'center',
     lineHeight: 20,
     marginBottom: 40,
   },
 
-  /* Countdown */
   countdownWrapper: {
     marginBottom: 32,
   },
 
-  /* ECG */
   ecgContainer: {
     width: '100%',
     height: 30,
@@ -276,29 +299,28 @@ const styles = StyleSheet.create({
   ecgFlat: {
     width: 60,
     height: 2,
-    backgroundColor: 'rgba(220,251,78,0.2)',
+    backgroundColor: colors.primaryAlpha20,
   },
   ecgPeak: {
     width: 3,
     height: 20,
-    backgroundColor: 'rgba(220,251,78,0.4)',
+    backgroundColor: colors.primaryAlpha40,
     borderRadius: 1,
   },
   ecgDip: {
     width: 3,
     height: 12,
-    backgroundColor: 'rgba(220,251,78,0.3)',
+    backgroundColor: colors.primaryAlpha30,
     borderRadius: 1,
     marginTop: 8,
   },
   ecgSmallPeak: {
     width: 3,
     height: 10,
-    backgroundColor: 'rgba(220,251,78,0.25)',
+    backgroundColor: colors.primaryAlpha25,
     borderRadius: 1,
   },
 
-  /* Cancel */
   cancelButton: {
     borderWidth: 1,
     borderColor: colors.borderDark,
@@ -309,10 +331,9 @@ const styles = StyleSheet.create({
   },
   cancelText: {
     fontSize: 14,
-    color: '#444444',
+    color: colors.gray,
   },
 
-  /* Connected state */
   connectedContainer: {
     flex: 1,
     alignItems: 'center',
@@ -332,7 +353,7 @@ const styles = StyleSheet.create({
   },
   connectedSubtitle: {
     fontSize: 14,
-    color: '#444444',
+    color: colors.gray,
     textAlign: 'center',
     marginBottom: 48,
   },
@@ -361,6 +382,6 @@ const styles = StyleSheet.create({
   },
   sendAnotherText: {
     fontSize: 14,
-    color: '#444444',
+    color: colors.gray,
   },
 });

@@ -1,9 +1,8 @@
 /**
- * SendShhScreen — Immersive 2026 step flow to send a shh.
- * Contact picker with search, optional selfie, blur preview,
- * optional first word, ShhHeartButton hold 3s to send.
+ * SendShhScreen — Step flow to send a shh.
+ * Uses ShhHeartButton + ShhSelfiePreview components.
  */
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   View,
   TextInput,
@@ -12,23 +11,18 @@ import {
   StyleSheet,
   Alert,
 } from 'react-native';
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withRepeat,
-  withTiming,
-  withDelay,
-  withSequence,
-  interpolate,
-  Easing,
-} from 'react-native-reanimated';
+import * as Haptics from 'expo-haptics';
+import * as ImagePicker from 'expo-image-picker';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useTranslation } from 'react-i18next';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ShhText from '../../components/atoms/ShhText';
-import { useShhPress } from '../../hooks/useShhPress';
+import ShhHeartButton from '../../components/organisms/ShhHeartButton';
+import ShhSelfiePreview from '../../components/organisms/ShhSelfiePreview';
 import { useShhStore } from '../../stores/useShhStore';
+import { maybeRequestReview } from '../../services/ReviewService';
+import * as HappinessScore from '../../services/HappinessScore';
 import { colors } from '../../theme/colors';
 import type { RootStackParamList } from '../../types';
 
@@ -36,50 +30,11 @@ type Nav = NativeStackNavigationProp<RootStackParamList, 'SendShh'>;
 
 /* ─── Demo contacts ─── */
 const DEMO_CONTACTS = [
-  { id: '1', name: 'Léa Martin', subtitle: 'Ajouté récemment', initials: 'LM' },
-  { id: '2', name: 'Hugo Dupont', subtitle: 'Contact fréquent', initials: 'HD' },
-  { id: '3', name: 'Camille Roux', subtitle: 'Contact fréquent', initials: 'CR' },
+  { id: '1', name: 'L\u00e9a Martin', subtitle: 'Ajout\u00e9 r\u00e9cemment', initials: 'LM' },
+  { id: '2', name: 'Hugo Dupont', subtitle: 'Contact fr\u00e9quent', initials: 'HD' },
+  { id: '3', name: 'Camille Roux', subtitle: 'Contact fr\u00e9quent', initials: 'CR' },
   { id: '4', name: 'Nathan Petit', subtitle: 'Nouveau contact', initials: 'NP' },
 ];
-
-/* ─── Pulsing ring component ─── */
-function PulsingRings() {
-  const ring1 = useSharedValue(0);
-  const ring2 = useSharedValue(0);
-
-  useEffect(() => {
-    ring1.value = withRepeat(
-      withTiming(1, { duration: 2400, easing: Easing.out(Easing.ease) }),
-      -1,
-      false,
-    );
-    ring2.value = withDelay(
-      800,
-      withRepeat(
-        withTiming(1, { duration: 2400, easing: Easing.out(Easing.ease) }),
-        -1,
-        false,
-      ),
-    );
-  }, [ring1, ring2]);
-
-  const ring1Style = useAnimatedStyle(() => ({
-    transform: [{ scale: interpolate(ring1.value, [0, 1], [1, 2.2]) }],
-    opacity: interpolate(ring1.value, [0, 0.7, 1], [0.4, 0.15, 0]),
-  }));
-
-  const ring2Style = useAnimatedStyle(() => ({
-    transform: [{ scale: interpolate(ring2.value, [0, 1], [1, 2.6]) }],
-    opacity: interpolate(ring2.value, [0, 0.7, 1], [0.3, 0.1, 0]),
-  }));
-
-  return (
-    <>
-      <Animated.View style={[styles.pulsingRing, ring1Style]} />
-      <Animated.View style={[styles.pulsingRing, ring2Style]} />
-    </>
-  );
-}
 
 export default function SendShhScreen() {
   const { t } = useTranslation();
@@ -89,10 +44,25 @@ export default function SendShhScreen() {
   const [selectedContactId, setSelectedContactId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [isSending, setIsSending] = useState(false);
+  const [photoUri, setPhotoUri] = useState<string | null>(null);
+  const [blurLevel, setBlurLevel] = useState(40);
 
   const filteredContacts = DEMO_CONTACTS.filter((c) =>
     c.name.toLowerCase().includes(searchQuery.toLowerCase()),
   );
+
+  const handleTakeSelfie = useCallback(async () => {
+    const result = await ImagePicker.launchCameraAsync({
+      mediaTypes: ['images'],
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.8,
+    });
+    if (!result.canceled && result.assets[0]) {
+      setPhotoUri(result.assets[0].uri);
+      void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    }
+  }, []);
 
   const handleSend = useCallback(async () => {
     const contact = DEMO_CONTACTS.find((c) => c.id === selectedContactId);
@@ -102,7 +72,11 @@ export default function SendShhScreen() {
     try {
       await sendShh({
         receiver_phone_hash: contact.id,
+        photo_uri: photoUri ?? undefined,
+        blur_level: blurLevel,
       });
+      HappinessScore.track('shh_sent');
+      void maybeRequestReview('shh_sent');
       Alert.alert('', t('shh.send.sent'));
       navigation.goBack();
     } catch {
@@ -110,25 +84,21 @@ export default function SendShhScreen() {
     } finally {
       setIsSending(false);
     }
-  }, [selectedContactId, isSending, sendShh, t, navigation]);
-
-  const { onPressIn, onPressOut } = useShhPress({
-    onComplete: handleSend,
-  });
+  }, [selectedContactId, isSending, sendShh, photoUri, blurLevel, t, navigation]);
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      {/* ─── Nav bar ─── */}
+      {/* Nav bar */}
       <View style={styles.navBar}>
         <TouchableOpacity
           style={styles.backButton}
           onPress={() => navigation.goBack()}
           activeOpacity={0.7}
         >
-          <ShhText variant="body" style={styles.backArrow}>{'‹'}</ShhText>
+          <ShhText variant="body" style={styles.backArrow}>{'\u2039'}</ShhText>
         </TouchableOpacity>
         <ShhText variant="body" style={styles.navTitle}>
-          {t('shh.send.title', { defaultValue: 'Envoyer un shh' })}
+          {t('shh.send.title')}
         </ShhText>
         <View style={{ width: 40 }} />
       </View>
@@ -139,30 +109,30 @@ export default function SendShhScreen() {
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        {/* ─── Step 1 tag ─── */}
+        {/* Step 1 tag */}
         <ShhText variant="body" style={styles.stepTag}>
-          {t('shh.send.step1Tag', { defaultValue: 'ÉTAPE 1 — CHOISIS UN CONTACT' })}
+          {t('shh.send.step1Tag')}
         </ShhText>
 
-        {/* ─── Title ─── */}
+        {/* Title */}
         <ShhText variant="display" style={styles.sectionTitle}>
-          {t('shh.send.pickContact', { defaultValue: 'À qui ?' })}
+          {t('shh.send.pickContact')}
         </ShhText>
 
-        {/* ─── Search box ─── */}
+        {/* Search box */}
         <View style={styles.searchBox}>
-          <ShhText variant="body" style={styles.searchIcon}>{'🔍'}</ShhText>
+          <ShhText variant="body" style={styles.searchIcon}>{'\uD83D\uDD0D'}</ShhText>
           <TextInput
             style={styles.searchInput}
             value={searchQuery}
             onChangeText={setSearchQuery}
-            placeholder={t('shh.send.searchPlaceholder', { defaultValue: 'Rechercher…' })}
-            placeholderTextColor="#333333"
+            placeholder={t('shh.send.searchPlaceholder')}
+            placeholderTextColor={colors.gray}
             autoCapitalize="none"
           />
         </View>
 
-        {/* ─── Contact cards ─── */}
+        {/* Contact cards */}
         {filteredContacts.map((contact) => {
           const isSelected = contact.id === selectedContactId;
           return (
@@ -172,7 +142,10 @@ export default function SendShhScreen() {
                 styles.contactCard,
                 isSelected && styles.contactCardSelected,
               ]}
-              onPress={() => setSelectedContactId(contact.id)}
+              onPress={() => {
+                void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                setSelectedContactId(contact.id);
+              }}
               activeOpacity={0.7}
             >
               <View style={[styles.avatar, isSelected && styles.avatarSelected]}>
@@ -188,48 +161,56 @@ export default function SendShhScreen() {
                   {contact.subtitle}
                 </ShhText>
               </View>
-              <ShhText variant="body" style={styles.contactArrow}>{'›'}</ShhText>
+              <ShhText variant="body" style={styles.contactArrow}>{'\u203A'}</ShhText>
             </TouchableOpacity>
           );
         })}
 
-        {/* ─── Photo hint ─── */}
-        <View style={styles.photoHint}>
-          <ShhText variant="body" style={styles.photoHintText}>
-            {t('shh.send.photoHint', {
-              defaultValue: '📸  Tu pourras ajouter un selfie flouté après avoir choisi ton contact',
-            })}
-          </ShhText>
-        </View>
+        {/* Selfie section */}
+        {selectedContactId && !photoUri && (
+          <TouchableOpacity
+            style={styles.selfieButton}
+            onPress={handleTakeSelfie}
+            activeOpacity={0.8}
+          >
+            <ShhText variant="body" style={styles.selfieButtonText}>
+              {t('shh.send.takeSelfie')} {'\uD83D\uDCF7'}
+            </ShhText>
+          </TouchableOpacity>
+        )}
 
-        {/* ─── Gesture section ─── */}
-        <View style={styles.gestureSection}>
-          <ShhText variant="body" style={styles.gestureLabel}>
-            {t('shh.send.readyLabel', { defaultValue: 'PRÊT À ENVOYER ?' })}
-          </ShhText>
+        {/* Selfie preview with blur levels */}
+        {photoUri && (
+          <ShhSelfiePreview
+            photoUri={photoUri}
+            onSelectBlurLevel={setBlurLevel}
+            selectedLevel={blurLevel}
+          />
+        )}
 
-          <View style={styles.heartContainer}>
-            <PulsingRings />
-            <TouchableOpacity
-              style={[
-                styles.heartButton,
-                !selectedContactId && styles.heartButtonDisabled,
-              ]}
-              onPressIn={selectedContactId ? onPressIn : undefined}
-              onPressOut={selectedContactId ? onPressOut : undefined}
-              activeOpacity={0.9}
-              disabled={!selectedContactId}
-            >
-              <ShhText variant="body" style={styles.heartEmoji}>{'🤫'}</ShhText>
-            </TouchableOpacity>
+        {/* Photo hint (when no selfie taken) */}
+        {selectedContactId && !photoUri && (
+          <View style={styles.photoHint}>
+            <ShhText variant="body" style={styles.photoHintText}>
+              {t('shh.send.photoHintDesc')}
+            </ShhText>
           </View>
+        )}
 
-          <ShhText variant="body" style={styles.gestureHint}>
-            {t('shh.send.gestureHint', {
-              defaultValue: 'Maintiens 3s · Haptic progressif · Son « shh… »',
-            })}
-          </ShhText>
-        </View>
+        {/* Heart button */}
+        {selectedContactId && (
+          <View style={styles.gestureSection}>
+            <ShhText variant="body" style={styles.gestureLabel}>
+              {t('shh.send.readyLabel')}
+            </ShhText>
+
+            <ShhHeartButton onComplete={handleSend} />
+
+            <ShhText variant="body" style={styles.gestureHint}>
+              {t('shh.send.gestureHint')}
+            </ShhText>
+          </View>
+        )}
       </ScrollView>
     </SafeAreaView>
   );
@@ -238,7 +219,7 @@ export default function SendShhScreen() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#111111',
+    backgroundColor: colors.dark,
   },
   navBar: {
     flexDirection: 'row',
@@ -250,22 +231,22 @@ const styles = StyleSheet.create({
   backButton: {
     width: 40,
     height: 40,
-    backgroundColor: '#1A1A1A',
+    backgroundColor: colors.cardDark,
     borderWidth: 1,
-    borderColor: '#2A2A2A',
+    borderColor: colors.borderDark,
     borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
   },
   backArrow: {
     fontSize: 22,
-    color: '#FFFFFF',
+    color: colors.white,
     marginTop: -2,
   },
   navTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#FFFFFF',
+    color: colors.white,
   },
   container: {
     flex: 1,
@@ -276,31 +257,28 @@ const styles = StyleSheet.create({
     paddingBottom: 60,
   },
 
-  /* Step tag */
   stepTag: {
     fontSize: 10,
     fontWeight: '700',
     textTransform: 'uppercase',
     letterSpacing: 1.5,
-    color: '#DCFB4E',
+    color: colors.primary,
     marginBottom: 6,
   },
 
-  /* Section title */
   sectionTitle: {
     fontSize: 28,
     fontWeight: '800',
-    color: '#FFFFFF',
+    color: colors.white,
     marginBottom: 20,
   },
 
-  /* Search box */
   searchBox: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#1A1A1A',
+    backgroundColor: colors.cardDark,
     borderWidth: 1,
-    borderColor: '#2A2A2A',
+    borderColor: colors.borderDark,
     borderRadius: 12,
     paddingVertical: 13,
     paddingHorizontal: 16,
@@ -313,41 +291,40 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     fontSize: 14,
-    color: '#FFFFFF',
+    color: colors.white,
     padding: 0,
   },
 
-  /* Contact cards */
   contactCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#1A1A1A',
+    backgroundColor: colors.cardDark,
     borderWidth: 1,
-    borderColor: '#2A2A2A',
+    borderColor: colors.borderDark,
     borderRadius: 14,
     padding: 14,
     marginBottom: 10,
   },
   contactCardSelected: {
-    borderColor: '#DCFB4E',
+    borderColor: colors.primary,
     borderWidth: 1.5,
   },
   avatar: {
     width: 46,
     height: 46,
     borderRadius: 23,
-    backgroundColor: '#DCFB4E',
+    backgroundColor: colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 14,
   },
   avatarSelected: {
-    backgroundColor: '#DCFB4E',
+    backgroundColor: colors.primary,
   },
   avatarText: {
     fontSize: 18,
     fontWeight: '800',
-    color: '#000000',
+    color: colors.black,
   },
   contactInfo: {
     flex: 1,
@@ -355,24 +332,39 @@ const styles = StyleSheet.create({
   contactName: {
     fontSize: 15,
     fontWeight: '600',
-    color: '#FFFFFF',
+    color: colors.white,
     marginBottom: 2,
   },
   contactSubtitle: {
     fontSize: 12,
-    color: '#444444',
+    color: colors.gray,
   },
   contactArrow: {
     fontSize: 18,
-    color: '#333333',
+    color: colors.gray,
     marginLeft: 8,
   },
 
-  /* Photo hint */
-  photoHint: {
-    backgroundColor: 'rgba(220,251,78,0.05)',
+  selfieButton: {
+    backgroundColor: colors.cardDark,
     borderWidth: 1,
-    borderColor: 'rgba(220,251,78,0.12)',
+    borderColor: colors.borderDark,
+    borderRadius: 14,
+    paddingVertical: 16,
+    alignItems: 'center',
+    marginTop: 8,
+    marginBottom: 8,
+  },
+  selfieButtonText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: colors.white,
+  },
+
+  photoHint: {
+    backgroundColor: colors.primaryAlpha05,
+    borderWidth: 1,
+    borderColor: colors.primaryAlpha12,
     borderRadius: 12,
     padding: 14,
     marginTop: 8,
@@ -380,11 +372,10 @@ const styles = StyleSheet.create({
   },
   photoHintText: {
     fontSize: 13,
-    color: 'rgba(220,251,78,0.6)',
+    color: colors.primaryAlpha60,
     lineHeight: 18,
   },
 
-  /* Gesture section */
   gestureSection: {
     alignItems: 'center',
     paddingVertical: 16,
@@ -394,42 +385,13 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     textTransform: 'uppercase',
     letterSpacing: 1,
-    color: '#333333',
+    color: colors.gray,
     marginBottom: 28,
-  },
-  heartContainer: {
-    width: 200,
-    height: 200,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 20,
-  },
-  heartButton: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    backgroundColor: '#DCFB4E',
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 10,
-  },
-  heartButtonDisabled: {
-    opacity: 0.3,
-  },
-  heartEmoji: {
-    fontSize: 48,
-  },
-  pulsingRing: {
-    position: 'absolute',
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    borderWidth: 2,
-    borderColor: '#DCFB4E',
   },
   gestureHint: {
     fontSize: 13,
-    color: '#333333',
+    color: colors.gray,
     textAlign: 'center',
+    marginTop: 16,
   },
 });
