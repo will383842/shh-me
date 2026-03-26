@@ -34,7 +34,14 @@
       "cta": "Envoie ton premier shh \ud83e\udd2b"
     },
     "shhCount_one": "{{count}} secret",
-    "shhCount_other": "{{count}} secrets"
+    "shhCount_other": "{{count}} secrets",
+    "received": "Reçus",
+    "sent": "Envoyés",
+    "shhReceived": "shh reçus",
+    "newMessages": "nouveaux messages",
+    "sendShh": "Envoyer un shh",
+    "tab.home": "Accueil",
+    "tab.profile": "Profil"
   },
   "shh": {
     "send": {
@@ -46,7 +53,22 @@
       "takeSelfie": "Prends un selfie (optionnel)",
       "skipSelfie": "Passer",
       "previewBlur": "Choisis ton niveau de flou",
-      "step": "\u00c9tape {{current}} sur {{total}}"
+      "step": "\u00c9tape {{current}} sur {{total}}",
+      "title": "Envoyer un shh",
+      "step1Tag": "\u00c9TAPE 1 \u2014 CHOISIS UN CONTACT",
+      "readyLabel": "PR\u00caT \u00c0 ENVOYER ?",
+      "searchPlaceholder": "Rechercher...",
+      "photoHintTitle": "Photo optionnelle \ud83d\udcf7",
+      "photoHintDesc": "Ton selfie se d\u00e9flouttera progressivement \u00e0 chaque \u00e9change. 5 niveaux de myst\u00e8re.",
+      "gestureHint": "Maintiens 3s \u00b7 Haptic progressif \u00b7 Son \u00ab shh\u2026 \u00bb"
+    },
+    "detail": {
+      "anonymous": "Anonyme",
+      "day": "Jour",
+      "blurLevel": "Niveau",
+      "expires": "expire dans",
+      "guessTitle": "C'est qui d'apr\u00e8s toi ? \ud83e\udd2b",
+      "today": "Aujourd'hui"
     },
     "expiration": {
       "breathing": "Ce battement respire encore\u2026",
@@ -148,7 +170,13 @@
     "terms": "Conditions d'utilisation",
     "communityGuidelines": "R\u00e8gles de la communaut\u00e9",
     "panic": "Tout arr\u00eater",
-    "panicConfirm": "Cela bloquera toutes les conversations et rendra ton profil invisible. Continuer ?"
+    "panicConfirm": "Cela bloquera toutes les conversations et rendra ton profil invisible. Continuer ?",
+    "notificationsSection": "NOTIFICATIONS",
+    "privacySection": "CONFIDENTIALIT\u00c9",
+    "languageSection": "LANGUE",
+    "supportSection": "SUPPORT",
+    "dangerSection": "ZONE DANGER",
+    "panicSubtitle": "Supprime tous les shh actifs \u00b7 Pause 24h"
   },
   "profile": {
     "shhLifetime": "Shhs \u00e0 vie"

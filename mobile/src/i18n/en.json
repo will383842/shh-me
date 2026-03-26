@@ -34,7 +34,14 @@
       "cta": "Send your first shh \ud83e\udd2b"
     },
     "shhCount_one": "{{count}} secret",
-    "shhCount_other": "{{count}} secrets"
+    "shhCount_other": "{{count}} secrets",
+    "received": "Received",
+    "sent": "Sent",
+    "shhReceived": "shh received",
+    "newMessages": "new messages",
+    "sendShh": "Send a shh",
+    "tab.home": "Home",
+    "tab.profile": "Profile"
   },
   "shh": {
     "send": {
@@ -46,7 +53,22 @@
       "takeSelfie": "Take a selfie (optional)",
       "skipSelfie": "Skip",
       "previewBlur": "Choose your blur level",
-      "step": "Step {{current}} of {{total}}"
+      "step": "Step {{current}} of {{total}}",
+      "title": "Send a shh",
+      "step1Tag": "STEP 1 — CHOOSE A CONTACT",
+      "readyLabel": "READY TO SEND?",
+      "searchPlaceholder": "Search...",
+      "photoHintTitle": "Optional photo \ud83d\udcf7",
+      "photoHintDesc": "Your selfie will unblur progressively with each exchange. 5 levels of mystery.",
+      "gestureHint": "Hold 3s \u00b7 Progressive haptic \u00b7 \"shh...\" sound"
+    },
+    "detail": {
+      "anonymous": "Anonymous",
+      "day": "Day",
+      "blurLevel": "Level",
+      "expires": "expires in",
+      "guessTitle": "Who do you think it is? \ud83e\udd2b",
+      "today": "Today"
     },
     "expiration": {
       "breathing": "This heartbeat is still breathing\u2026",
@@ -148,7 +170,13 @@
     "terms": "Terms of Service",
     "communityGuidelines": "Community Guidelines",
     "panic": "Stop everything",
-    "panicConfirm": "This will block all conversations and make your profile invisible. Continue?"
+    "panicConfirm": "This will block all conversations and make your profile invisible. Continue?",
+    "notificationsSection": "NOTIFICATIONS",
+    "privacySection": "PRIVACY",
+    "languageSection": "LANGUAGE",
+    "supportSection": "SUPPORT",
+    "dangerSection": "DANGER ZONE",
+    "panicSubtitle": "Delete all active shh · 24h pause"
   },
   "profile": {
     "shhLifetime": "Shhs lifetime"
