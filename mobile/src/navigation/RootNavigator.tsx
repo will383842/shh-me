@@ -1,7 +1,8 @@
 /**
  * RootNavigator — Main stack navigation.
- * Splash → Auth → BirthYear → Home (main flow)
- * Home FAB → SendShh, card tap → ShhDetail, menu → Settings
+ * Splash -> Auth -> BirthYear -> Home (main flow)
+ * Home FAB -> SendShh, card tap -> ShhDetail, menu -> Settings
+ * Sprint 3-4: AudioRecord, Clue, Connect, ConnectVideo
  */
 import React, { lazy, Suspense } from 'react';
 import { View, StyleSheet } from 'react-native';
@@ -21,6 +22,16 @@ const HomeScreen = lazy(() => import('../screens/home/HomeScreen'));
 const SendShhScreen = lazy(() => import('../screens/shh/SendShhScreen'));
 const ShhDetailScreen = lazy(
   () => import('../screens/shh/ShhDetailScreen'),
+);
+const AudioRecordScreen = lazy(
+  () => import('../screens/shh/AudioRecordScreen'),
+);
+const ClueScreen = lazy(() => import('../screens/shh/ClueScreen'));
+const ConnectScreen = lazy(
+  () => import('../screens/reveal/ConnectScreen'),
+);
+const ConnectVideoScreen = lazy(
+  () => import('../screens/reveal/ConnectVideoScreen'),
 );
 const SettingsScreen = lazy(
   () => import('../screens/settings/SettingsScreen'),
@@ -83,6 +94,26 @@ export default function RootNavigator() {
             name="ShhDetail"
             component={withSuspense(ShhDetailScreen)}
             options={{ animation: 'slide_from_right' }}
+          />
+          <Stack.Screen
+            name="AudioRecord"
+            component={withSuspense(AudioRecordScreen)}
+            options={{ animation: 'slide_from_bottom' }}
+          />
+          <Stack.Screen
+            name="Clue"
+            component={withSuspense(ClueScreen)}
+            options={{ animation: 'slide_from_right' }}
+          />
+          <Stack.Screen
+            name="Connect"
+            component={withSuspense(ConnectScreen)}
+            options={{ animation: 'fade' }}
+          />
+          <Stack.Screen
+            name="ConnectVideo"
+            component={withSuspense(ConnectVideoScreen)}
+            options={{ animation: 'fade' }}
           />
           <Stack.Screen
             name="Settings"

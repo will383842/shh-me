@@ -70,12 +70,55 @@
     "record": "Maintiens pour enregistrer",
     "recording": "Enregistrement...",
     "preview": "\u00c9coute avant d\u2019envoyer",
-    "send": "Envoyer la voix"
+    "send": "Envoyer la voix",
+    "screenTitle": "Message vocal",
+    "filterActive": "\ud83c\udfb5 Filtre 'Le Souffle' actif",
+    "maxDuration": "30 secondes maximum",
+    "tapToRecord": "Appuie pour enregistrer",
+    "tapToStop": "Appuie pour stopper",
+    "replayRequired": "R\u00c9\u00c9COUTE OBLIGATOIRE AVANT ENVOI",
+    "listened": "\u00c9cout\u00e9",
+    "reRecord": "R\u00e9enregistrer",
+    "sendVocal": "Envoyer ce vocal"
   },
   "clue": {
     "morning": "Une question pour ton secret... \ud83e\udd2b",
     "afternoon": "Un indice vient d\u2019arriver... \ud83e\udd2b",
-    "anticipation": "Ton indice arrive entre 12h et 15h. Pr\u00e9pare-toi. \ud83e\udd2b"
+    "anticipation": "Ton indice arrive entre 12h et 15h. Pr\u00e9pare-toi. \ud83e\udd2b",
+    "screenTitle": "\ud83d\udd0d Indices",
+    "dayBadge": "\ud83d\udcc5 Jour {{day}} \u00b7 {{count}} indices",
+    "new": "NOUVEAU",
+    "type": {
+      "text": "TEXTE",
+      "emoji": "EMOJI",
+      "location": "LIEU",
+      "music": "MUSIQUE",
+      "habit": "HABITUDE"
+    },
+    "questionLabel": "\u2753 Question",
+    "answerPlaceholder": "Ta r\u00e9ponse...",
+    "sendClue": "Envoyer l'indice",
+    "answered": "Indice envoy\u00e9"
+  },
+  "connect": {
+    "mutualLabel": "R\u00c9V\u00c9LATION MUTUELLE",
+    "bothWant": "Les deux veulent se r\u00e9v\u00e9ler",
+    "countdownInfo": "Countdown de 5 secondes.\nTu peux annuler \u00e0 tout moment.",
+    "cancel": "Annuler",
+    "connected": "Connected",
+    "numbersExchanged": "Num\u00e9ros \u00e9chang\u00e9s.",
+    "seeVideo": "Voir la vid\u00e9o souvenir",
+    "sendAnother": "Envoie un shh \u00e0 quelqu'un d'autre",
+    "videoSubtitle": "Num\u00e9ros \u00e9chang\u00e9s.\nTu viens de vivre quelque chose de rare.",
+    "videoLabel": "Vid\u00e9o souvenir \u00b7 12s",
+    "shareVideo": "Partager la vid\u00e9o"
+  },
+  "share": {
+    "videoCaption": "On vient de vivre un truc dingue sur Shh Me \ud83e\udd2b\u2728",
+    "day1": "Jour 1 : Quelqu'un a un secret sur moi\u2026 \ud83e\udd2b #ShhMe",
+    "day3": "Jour 3 : Les indices s'accumulent\u2026 \ud83d\udd0d\ud83e\udd2b #ShhMe",
+    "day7": "Jour 7 : Le reveal approche\u2026 \u2764\ufe0f\ud83e\udd2b #ShhMe",
+    "reveal": "On vient de se connecter sur Shh Me \ud83e\udd2b\u2728 #ShhMe #Connected"
   },
   "reveal": {
     "request": "R\u00e9v\u00e9ler",

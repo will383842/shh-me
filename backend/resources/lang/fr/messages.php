@@ -147,4 +147,43 @@ return [
         'push' => 'Des personnes de ton quartier ont envoyé un shh ce soir 🤫',
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Audio (Sprint 3-4)
+    |--------------------------------------------------------------------------
+    */
+
+    'audio' => [
+        'filter_failed' => 'Le traitement vocal a échoué. Réessaie 🤫',
+        'not_validated' => 'Écoute ta voix avant de l\'envoyer 🤫',
+        'sent' => 'Ta voix a été envoyée 🤫',
+        'too_long' => 'L\'audio ne doit pas dépasser 30 secondes 🤫',
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Clues (Sprint 3-4)
+    |--------------------------------------------------------------------------
+    */
+
+    'clue' => [
+        'question_sent' => 'Une question a été envoyée 🤫',
+        'answered' => 'Ta réponse a été enregistrée 🤫',
+        'delivered' => 'Un indice a été livré 🤫',
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Connect (Sprint 3-4)
+    |--------------------------------------------------------------------------
+    */
+
+    'connect' => [
+        'waiting' => 'En attente de l\'autre coeur 🤫',
+        'cancelled' => 'Connect annulé 🤫',
+        'mutual' => 'Les deux coeurs battent ensemble 🤫',
+        'too_late' => 'Trop tard pour annuler 🤫',
+        'video_generating' => 'Ta vidéo de révélation est en cours de création 🤫',
+    ],
+
 ];

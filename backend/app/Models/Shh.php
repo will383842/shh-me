@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Carbon;
 
 /**
- * @property Carbon $expires_at
+ * @property Carbon|null $expires_at
  */
 class Shh extends Model
 {
@@ -54,6 +54,21 @@ class Shh extends Model
     public function guesses(): HasMany
     {
         return $this->hasMany(ShhGuess::class, 'shh_id');
+    }
+
+    public function audios(): HasMany
+    {
+        return $this->hasMany(ShhAudio::class, 'shh_id');
+    }
+
+    public function clues(): HasMany
+    {
+        return $this->hasMany(ShhClue::class, 'shh_id');
+    }
+
+    public function connect(): HasOne
+    {
+        return $this->hasOne(ShhConnect::class, 'shh_id');
     }
 
     public function scopeActive(Builder $query): Builder

@@ -70,12 +70,55 @@
     "record": "Hold to record",
     "recording": "Recording...",
     "preview": "Listen before sending",
-    "send": "Send voice"
+    "send": "Send voice",
+    "screenTitle": "Voice message",
+    "filterActive": "\ud83c\udfb5 'Le Souffle' filter active",
+    "maxDuration": "30 seconds maximum",
+    "tapToRecord": "Tap to record",
+    "tapToStop": "Tap to stop",
+    "replayRequired": "MANDATORY REPLAY BEFORE SENDING",
+    "listened": "Listened",
+    "reRecord": "Re-record",
+    "sendVocal": "Send this vocal"
   },
   "clue": {
     "morning": "A question for your secret... \ud83e\udd2b",
     "afternoon": "A clue just arrived... \ud83e\udd2b",
-    "anticipation": "Your clue arrives between 12pm and 3pm. Get ready. \ud83e\udd2b"
+    "anticipation": "Your clue arrives between 12pm and 3pm. Get ready. \ud83e\udd2b",
+    "screenTitle": "\ud83d\udd0d Clues",
+    "dayBadge": "\ud83d\udcc5 Day {{day}} \u00b7 {{count}} clues",
+    "new": "NEW",
+    "type": {
+      "text": "TEXT",
+      "emoji": "EMOJI",
+      "location": "LOCATION",
+      "music": "MUSIC",
+      "habit": "HABIT"
+    },
+    "questionLabel": "\u2753 Question",
+    "answerPlaceholder": "Your answer...",
+    "sendClue": "Send the clue",
+    "answered": "Clue sent"
+  },
+  "connect": {
+    "mutualLabel": "MUTUAL REVEAL",
+    "bothWant": "Both want to reveal",
+    "countdownInfo": "5-second countdown.\nYou can cancel at any time.",
+    "cancel": "Cancel",
+    "connected": "Connected",
+    "numbersExchanged": "Numbers exchanged.",
+    "seeVideo": "See the memory video",
+    "sendAnother": "Send a shh to someone else",
+    "videoSubtitle": "Numbers exchanged.\nYou just lived something rare.",
+    "videoLabel": "Memory video \u00b7 12s",
+    "shareVideo": "Share the video"
+  },
+  "share": {
+    "videoCaption": "We just lived something crazy on Shh Me \ud83e\udd2b\u2728",
+    "day1": "Day 1: Someone has a secret about me\u2026 \ud83e\udd2b #ShhMe",
+    "day3": "Day 3: The clues are piling up\u2026 \ud83d\udd0d\ud83e\udd2b #ShhMe",
+    "day7": "Day 7: The reveal is getting closer\u2026 \u2764\ufe0f\ud83e\udd2b #ShhMe",
+    "reveal": "We just connected on Shh Me \ud83e\udd2b\u2728 #ShhMe #Connected"
   },
   "reveal": {
     "request": "Reveal",

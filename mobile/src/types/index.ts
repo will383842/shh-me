@@ -82,6 +82,10 @@ export type RootStackParamList = {
   Home: undefined;
   SendShh: undefined;
   ShhDetail: { shhId: string };
+  AudioRecord: { shhId: string };
+  Clue: { shhId: string; isSender: boolean };
+  Connect: { shhId: string };
+  ConnectVideo: { shhId: string };
   Settings: undefined;
 };
 

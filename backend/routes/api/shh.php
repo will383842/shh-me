@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\Api\AudioController;
 use App\Http\Controllers\Api\ReactionController;
 use App\Http\Controllers\Api\ShhController;
 use App\Http\Controllers\Api\ShhGuessController;
@@ -28,4 +29,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('messages/{message}/reactions', [ReactionController::class, 'store'])->middleware('throttle:30,1');
     Route::delete('messages/{message}/reactions', [ReactionController::class, 'destroy'])->middleware('throttle:30,1');
+
+    // Audio routes (Sprint 3-4)
+    Route::post('shh/{shh}/audio', [AudioController::class, 'store'])->middleware('throttle:10,1');
+    Route::post('shh/{shh}/audio/send', [AudioController::class, 'send'])->middleware('throttle:10,1');
+    Route::get('shh/{shh}/audio', [AudioController::class, 'index'])->middleware('throttle:60,1');
 });
