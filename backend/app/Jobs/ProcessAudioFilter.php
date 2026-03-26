@@ -58,7 +58,6 @@ class ProcessAudioFilter implements ShouldQueue
                 'filtered_path' => $filteredPath,
             ]);
 
-            // Dispatch moderation after filtering
             ModerateAudio::dispatch($audio->id);
         } catch (\Throwable $e) {
             Log::error('ProcessAudioFilter: Failed', [
@@ -67,6 +66,20 @@ class ProcessAudioFilter implements ShouldQueue
             ]);
 
             throw $e;
+        }
+    }
+
+    public function failed(?\Throwable $exception): void
+    {
+        $audio = ShhAudio::find($this->audioId);
+
+        if ($audio) {
+            $audio->update(['moderation_status' => 'review']);
+
+            Log::critical('ProcessAudioFilter: All retries exhausted, marked as review', [
+                'audio_id' => $this->audioId,
+                'error' => $exception?->getMessage(),
+            ]);
         }
     }
 }

@@ -65,8 +65,11 @@ class ShhController extends Controller
             ], 403);
         }
 
-        // BUG 4: Max 10 active shh per user
-        $activeShhCount = Shh::where('status', 'active')->count();
+        // Max 10 active shh per user (check via Vault roles)
+        $activeShhCount = Shh::where('status', 'active')
+            ->get()
+            ->filter(fn (Shh $shh) => $this->vaultService->getRole($shh->vault_ref, $user) !== 'none')
+            ->count();
         if ($activeShhCount >= 10) {
             return response()->json([
                 'error' => ['code' => 'MAX_ACTIVE_SHH', 'message' => __('messages.shh.max_per_day'), 'status' => 422],
