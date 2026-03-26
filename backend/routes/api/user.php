@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\Api\AbTestController;
 use App\Http\Controllers\Api\BlockController;
 use App\Http\Controllers\Api\FeedbackController;
 use App\Http\Controllers\Api\PanicController;
@@ -20,4 +21,6 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     Route::post('blocks/{user}', [BlockController::class, 'store']);
     Route::delete('blocks/{user}', [BlockController::class, 'destroy']);
     Route::get('blocks', [BlockController::class, 'index']);
+
+    Route::get('ab/link-variant', [AbTestController::class, 'linkVariant']);
 });

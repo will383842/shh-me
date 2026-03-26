@@ -50,6 +50,10 @@ return [
         'wrong' => 'Not this time.',
     ],
 
+    'relance' => [
+        'morning_11h' => 'You haven\'t answered... Your crush is waiting for their clue 🤫',
+    ],
+
     'user' => [
         'account_deleted' => 'Your account has vanished, like a whisper.',
     ],

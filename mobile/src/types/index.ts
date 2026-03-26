@@ -96,3 +96,11 @@ export interface QueuedAction {
   payload: Record<string, unknown>;
   createdAt: number;
 }
+
+/** Feedback */
+export type FeedbackCategory = 'bug' | 'idea' | 'unhappy';
+
+export interface FeedbackPayload {
+  category: FeedbackCategory;
+  message: string | null;
+}

@@ -7,8 +7,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Carbon;
 use Laravel\Sanctum\HasApiTokens;
 
+/**
+ * @property Carbon|null $paused_until
+ * @property Carbon|null $last_active_at
+ * @property Carbon|null $accepted_terms_at
+ */
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, HasUlids, SoftDeletes;

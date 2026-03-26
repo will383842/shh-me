@@ -50,6 +50,10 @@ return [
         'wrong' => 'Pas cette fois.',
     ],
 
+    'relance' => [
+        'morning_11h' => 'Tu n\'as pas répondu… Ton crush attend son indice 🤫',
+    ],
+
     'user' => [
         'account_deleted' => 'Ton compte a disparu, comme un souffle.',
     ],

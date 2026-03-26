@@ -10,28 +10,28 @@
     "signInGoogle": "Continuer avec Google",
     "signInEmail": "Continuer avec Email",
     "emailPlaceholder": "Ton email",
-    "otpSent": "Code envoy\u00e9 \u00e0 ton email",
+    "otpSent": "Code envoyé à ton email",
     "otpPlaceholder": "Entre le code",
-    "title": "Quelqu'un pense \u00e0 toi.",
+    "title": "Quelqu'un pense à toi.",
     "subtitle": "Envoie un secret anonyme.\nLaisse la photo te trahir, doucement.",
     "legal": "En continuant, tu acceptes nos ",
     "terms": "Conditions",
     "and": " et ",
-    "privacy": "Confidentialit\u00e9"
+    "privacy": "Confidentialité"
   },
   "onboarding": {
     "birthYear": {
-      "title": "Quelle est ton ann\u00e9e de naissance ?",
-      "subtitle": "Shh Me est r\u00e9serv\u00e9 aux 18 ans et plus",
-      "blocked": "Shh Me est r\u00e9serv\u00e9 aux 18 ans et plus. On se retrouve bient\u00f4t \ud83e\udd2b",
+      "title": "Quelle est ton année de naissance ?",
+      "subtitle": "Shh Me est réservé aux 18 ans et plus",
+      "blocked": "Shh Me est réservé aux 18 ans et plus. On se retrouve bientôt 🤫",
       "confirm": "Continuer"
     }
   },
   "home": {
     "empty": {
       "title": "Ton histoire commence.",
-      "subtitle": "Quelqu'un va oser. \ud83e\udd2b",
-      "cta": "Envoie ton premier shh \ud83e\udd2b"
+      "subtitle": "Quelqu'un va oser. 🤫",
+      "cta": "Envoie ton premier shh 🤫"
     },
     "shhCount_one": "{{count}} secret",
     "shhCount_other": "{{count}} secrets",
@@ -48,67 +48,67 @@
       "holdToSend": "Maintiens 3 secondes pour envoyer",
       "firstWord": "Un seul mot pour cette personne.",
       "firstWordPlaceholder": "Un mot...",
-      "sent": "Ton shh a \u00e9t\u00e9 envoy\u00e9 \ud83e\udd2b",
+      "sent": "Ton shh a été envoyé 🤫",
       "pickContact": "C'est pour qui ?",
       "takeSelfie": "Prends un selfie (optionnel)",
       "skipSelfie": "Passer",
       "previewBlur": "Choisis ton niveau de flou",
-      "step": "\u00c9tape {{current}} sur {{total}}",
+      "step": "Étape {{current}} sur {{total}}",
       "title": "Envoyer un shh",
-      "step1Tag": "\u00c9TAPE 1 \u2014 CHOISIS UN CONTACT",
-      "readyLabel": "PR\u00caT \u00c0 ENVOYER ?",
+      "step1Tag": "ÉTAPE 1 — CHOISIS UN CONTACT",
+      "readyLabel": "PRÊT À ENVOYER ?",
       "searchPlaceholder": "Rechercher...",
-      "photoHintTitle": "Photo optionnelle \ud83d\udcf7",
-      "photoHintDesc": "Ton selfie se d\u00e9flouttera progressivement \u00e0 chaque \u00e9change. 5 niveaux de myst\u00e8re.",
-      "gestureHint": "Maintiens 3s \u00b7 Haptic progressif \u00b7 Son \u00ab shh\u2026 \u00bb"
+      "photoHintTitle": "Photo optionnelle 📷",
+      "photoHintDesc": "Ton selfie se déflouttera progressivement à chaque échange. 5 niveaux de mystère.",
+      "gestureHint": "Maintiens 3s · Haptic progressif · Son « shh… »"
     },
     "detail": {
       "anonymous": "Anonyme",
       "day": "Jour",
       "blurLevel": "Niveau",
       "expires": "expire dans",
-      "guessTitle": "C'est qui d'apr\u00e8s toi ? \ud83e\udd2b",
+      "guessTitle": "C'est qui d'après toi ? 🤫",
       "today": "Aujourd'hui"
     },
     "expiration": {
-      "breathing": "Ce battement respire encore\u2026",
-      "weakening": "Le battement s\u2019affaiblit\u2026",
-      "lastMoments": "Derniers instants\u2026",
-      "existed": "Ce battement a exist\u00e9."
+      "breathing": "Ce battement respire encore…",
+      "weakening": "Le battement s’affaiblit…",
+      "lastMoments": "Derniers instants…",
+      "existed": "Ce battement a existé."
     },
     "message": {
-      "placeholder": "\u00c9cris une pens\u00e9e secr\u00e8te...",
+      "placeholder": "Écris une pensée secrète...",
       "maxLength": "{{count}}/200"
     },
     "guess": {
-      "title": "C'est qui d'apr\u00e8s toi ? \ud83e\udd2b",
-      "notThisTime": "Pas cette fois \ud83e\udd2b",
+      "title": "C'est qui d'après toi ? 🤫",
+      "notThisTime": "Pas cette fois 🤫",
       "attemptsLeft": "{{count}} tentatives restantes",
-      "noMoreAttempts": "Plus de tentatives \ud83e\udd2b"
+      "noMoreAttempts": "Plus de tentatives 🤫"
     },
-    "share": "Partager \ud83e\udd2b"
+    "share": "Partager 🤫"
   },
   "audio": {
     "record": "Maintiens pour enregistrer",
     "recording": "Enregistrement...",
-    "preview": "\u00c9coute avant d\u2019envoyer",
+    "preview": "Écoute avant d’envoyer",
     "send": "Envoyer la voix",
     "screenTitle": "Message vocal",
-    "filterActive": "\ud83c\udfb5 Filtre 'Le Souffle' actif",
+    "filterActive": "🎵 Filtre 'Le Souffle' actif",
     "maxDuration": "30 secondes maximum",
     "tapToRecord": "Appuie pour enregistrer",
     "tapToStop": "Appuie pour stopper",
-    "replayRequired": "R\u00c9\u00c9COUTE OBLIGATOIRE AVANT ENVOI",
-    "listened": "\u00c9cout\u00e9",
-    "reRecord": "R\u00e9enregistrer",
+    "replayRequired": "RÉÉCOUTE OBLIGATOIRE AVANT ENVOI",
+    "listened": "Écouté",
+    "reRecord": "Réenregistrer",
     "sendVocal": "Envoyer ce vocal"
   },
   "clue": {
-    "morning": "Une question pour ton secret... \ud83e\udd2b",
-    "afternoon": "Un indice vient d\u2019arriver... \ud83e\udd2b",
-    "anticipation": "Ton indice arrive entre 12h et 15h. Pr\u00e9pare-toi. \ud83e\udd2b",
-    "screenTitle": "\ud83d\udd0d Indices",
-    "dayBadge": "\ud83d\udcc5 Jour {{day}} \u00b7 {{count}} indices",
+    "morning": "Une question pour ton secret... 🤫",
+    "afternoon": "Un indice vient d’arriver... 🤫",
+    "anticipation": "Ton indice arrive entre 12h et 15h. Prépare-toi. 🤫",
+    "screenTitle": "🔍 Indices",
+    "dayBadge": "📅 Jour {{day}} · {{count}} indices",
     "new": "NOUVEAU",
     "type": {
       "text": "TEXTE",
@@ -117,85 +117,94 @@
       "music": "MUSIQUE",
       "habit": "HABITUDE"
     },
-    "questionLabel": "\u2753 Question",
-    "answerPlaceholder": "Ta r\u00e9ponse...",
+    "questionLabel": "❓ Question",
+    "answerPlaceholder": "Ta réponse...",
     "sendClue": "Envoyer l'indice",
-    "answered": "Indice envoy\u00e9"
+    "answered": "Indice envoyé"
   },
   "connect": {
-    "mutualLabel": "R\u00c9V\u00c9LATION MUTUELLE",
-    "bothWant": "Les deux veulent se r\u00e9v\u00e9ler",
-    "countdownInfo": "Countdown de 5 secondes.\nTu peux annuler \u00e0 tout moment.",
+    "mutualLabel": "RÉVÉLATION MUTUELLE",
+    "bothWant": "Les deux veulent se révéler",
+    "countdownInfo": "Countdown de 5 secondes.\nTu peux annuler à tout moment.",
     "cancel": "Annuler",
     "connected": "Connected",
-    "numbersExchanged": "Num\u00e9ros \u00e9chang\u00e9s.",
-    "seeVideo": "Voir la vid\u00e9o souvenir",
-    "sendAnother": "Envoie un shh \u00e0 quelqu'un d'autre",
-    "videoSubtitle": "Num\u00e9ros \u00e9chang\u00e9s.\nTu viens de vivre quelque chose de rare.",
-    "videoLabel": "Vid\u00e9o souvenir \u00b7 12s",
-    "shareVideo": "Partager la vid\u00e9o"
+    "numbersExchanged": "Numéros échangés.",
+    "seeVideo": "Voir la vidéo souvenir",
+    "sendAnother": "Envoie un shh à quelqu'un d'autre",
+    "videoSubtitle": "Numéros échangés.\nTu viens de vivre quelque chose de rare.",
+    "videoLabel": "Vidéo souvenir · 12s",
+    "shareVideo": "Partager la vidéo"
   },
   "share": {
-    "videoCaption": "On vient de vivre un truc dingue sur Shh Me \ud83e\udd2b\u2728",
-    "day1": "Jour 1 : Quelqu'un a un secret sur moi\u2026 \ud83e\udd2b #ShhMe",
-    "day3": "Jour 3 : Les indices s'accumulent\u2026 \ud83d\udd0d\ud83e\udd2b #ShhMe",
-    "day7": "Jour 7 : Le reveal approche\u2026 \u2764\ufe0f\ud83e\udd2b #ShhMe",
-    "reveal": "On vient de se connecter sur Shh Me \ud83e\udd2b\u2728 #ShhMe #Connected"
+    "videoCaption": "On vient de vivre un truc dingue sur Shh Me 🤫✨",
+    "day1": "Jour 1 : Quelqu'un a un secret sur moi… 🤫 #ShhMe",
+    "day3": "Jour 3 : Les indices s'accumulent… 🔍🤫 #ShhMe",
+    "day7": "Jour 7 : Le reveal approche… ❤️🤫 #ShhMe",
+    "reveal": "On vient de se connecter sur Shh Me 🤫✨ #ShhMe #Connected"
   },
   "reveal": {
-    "request": "R\u00e9v\u00e9ler",
+    "request": "Révéler",
     "cancel": "Annuler",
-    "countdown": "R\u00e9v\u00e9lation dans {{seconds}}s...",
-    "connected": "\ud83e\udd2b Connect\u00e9",
-    "sendAnother": "Envoie un shh \u00e0 quelqu\u2019un d\u2019autre \ud83e\udd2b"
+    "countdown": "Révélation dans {{seconds}}s...",
+    "connected": "🤫 Connecté",
+    "sendAnother": "Envoie un shh à quelqu’un d’autre 🤫"
   },
   "notification": {
-    "shhReceived": "Quelqu\u2019un a un secret pour toi \ud83e\udd2b",
-    "newMessage": "Une pens\u00e9e secr\u00e8te t\u2019attend \ud83e\udd2b",
-    "audioReceived": "Tu as re\u00e7u une voix myst\u00e9rieuse \ud83e\udd2b",
-    "photoUnblurred": "La photo de ton admirateur secret est plus nette\u2026 \ud83e\udd2b",
-    "revealReady": "Le reveal est pr\u00eat. Tu oses ? \ud83e\udd2b"
+    "shhReceived": "Quelqu’un a un secret pour toi 🤫",
+    "newMessage": "Une pensée secrète t’attend 🤫",
+    "audioReceived": "Tu as reçu une voix mystérieuse 🤫",
+    "photoUnblurred": "La photo de ton admirateur secret est plus nette… 🤫",
+    "revealReady": "Le reveal est prêt. Tu oses ? 🤫"
   },
   "settings": {
-    "title": "Param\u00e8tres",
+    "title": "Paramètres",
     "notifications": "Notifications",
     "language": "Langue",
-    "blocked": "Utilisateurs bloqu\u00e9s",
+    "blocked": "Utilisateurs bloqués",
     "deleteAccount": "Supprimer mon compte",
-    "deleteConfirm": "Cette action est irr\u00e9versible. Toutes tes donn\u00e9es seront supprim\u00e9es.",
-    "logout": "Se d\u00e9connecter",
-    "ghost": "Shh Fant\u00f4me",
+    "deleteConfirm": "Cette action est irréversible. Toutes tes données seront supprimées.",
+    "logout": "Se déconnecter",
+    "ghost": "Shh Fantôme",
     "helpFeedback": "Aide & Retours",
-    "privacyPolicy": "Politique de confidentialit\u00e9",
+    "privacyPolicy": "Politique de confidentialité",
     "terms": "Conditions d'utilisation",
-    "communityGuidelines": "R\u00e8gles de la communaut\u00e9",
-    "panic": "Tout arr\u00eater",
+    "communityGuidelines": "Règles de la communauté",
+    "panic": "Tout arrêter",
     "panicConfirm": "Cela bloquera toutes les conversations et rendra ton profil invisible. Continuer ?",
     "notificationsSection": "NOTIFICATIONS",
-    "privacySection": "CONFIDENTIALIT\u00c9",
+    "privacySection": "CONFIDENTIALITÉ",
     "languageSection": "LANGUE",
     "supportSection": "SUPPORT",
     "dangerSection": "ZONE DANGER",
-    "panicSubtitle": "Supprime tous les shh actifs \u00b7 Pause 24h"
+    "panicSubtitle": "Supprime tous les shh actifs · Pause 24h"
   },
   "profile": {
-    "shhLifetime": "Shhs \u00e0 vie"
+    "shhLifetime": "Shhs à vie"
   },
   "community": {
-    "counter": "{{count}} personnes pr\u00e8s de toi utilisent Shh Me \ud83e\udd2b"
+    "counter": "{{count}} personnes près de toi utilisent Shh Me 🤫"
   },
   "offline": {
-    "pending": "Ton shh sera envoy\u00e9 d\u00e8s que tu auras du r\u00e9seau \ud83e\udd2b"
+    "pending": "Ton shh sera envoyé dès que tu auras du réseau 🤫"
   },
   "error": {
-    "generic": "Quelque chose n\u2019a pas march\u00e9. R\u00e9essaie \ud83e\udd2b",
-    "network": "Pas de connexion. T\u2019inqui\u00e8te pas, on synchronise d\u00e8s ton retour \ud83e\udd2b",
-    "boundary": "Quelque chose ne va pas \ud83e\udd2b \u2014 R\u00e9essaie"
+    "generic": "Quelque chose n’a pas marché. Réessaie 🤫",
+    "network": "Pas de connexion. T’inquiète pas, on synchronise dès ton retour 🤫",
+    "boundary": "Quelque chose ne va pas 🤫 — Réessaie"
   },
   "ghost": {
-    "push": "Des personnes de ton quartier ont envoy\u00e9 un shh ce soir \ud83e\udd2b"
+    "push": "Des personnes de ton quartier ont envoyé un shh ce soir 🤫"
   },
   "relance": {
-    "gentle": "Quelque chose de doux t\u2019attend quand tu voudras. Pas de rush. \ud83e\udd2b"
+    "gentle": "Quelque chose de doux t’attend quand tu voudras. Pas de rush. 🤫"
+  },
+  "feedback": {
+    "title": "On t'écoute 🤫",
+    "bug": "Quelque chose ne marche pas",
+    "idea": "J'ai une idée",
+    "unhappy": "Je suis déçu(e)",
+    "optional_message": "Détails (optionnel)",
+    "send": "Envoyer 🤫",
+    "thanks": "Merci pour ton retour 🤫"
   }
 }

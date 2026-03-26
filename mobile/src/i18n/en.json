@@ -23,15 +23,15 @@
     "birthYear": {
       "title": "When were you born?",
       "subtitle": "Shh Me is for 18+ only",
-      "blocked": "Shh Me is reserved for 18 and over. See you soon \ud83e\udd2b",
+      "blocked": "Shh Me is reserved for 18 and over. See you soon 🤫",
       "confirm": "Continue"
     }
   },
   "home": {
     "empty": {
       "title": "Your story begins.",
-      "subtitle": "Someone will dare. \ud83e\udd2b",
-      "cta": "Send your first shh \ud83e\udd2b"
+      "subtitle": "Someone will dare. 🤫",
+      "cta": "Send your first shh 🤫"
     },
     "shhCount_one": "{{count}} secret",
     "shhCount_other": "{{count}} secrets",
@@ -48,7 +48,7 @@
       "holdToSend": "Hold 3 seconds to send",
       "firstWord": "One word for them.",
       "firstWordPlaceholder": "One word...",
-      "sent": "Your shh has been sent \ud83e\udd2b",
+      "sent": "Your shh has been sent 🤫",
       "pickContact": "Who is it for?",
       "takeSelfie": "Take a selfie (optional)",
       "skipSelfie": "Skip",
@@ -58,22 +58,22 @@
       "step1Tag": "STEP 1 — CHOOSE A CONTACT",
       "readyLabel": "READY TO SEND?",
       "searchPlaceholder": "Search...",
-      "photoHintTitle": "Optional photo \ud83d\udcf7",
+      "photoHintTitle": "Optional photo 📷",
       "photoHintDesc": "Your selfie will unblur progressively with each exchange. 5 levels of mystery.",
-      "gestureHint": "Hold 3s \u00b7 Progressive haptic \u00b7 \"shh...\" sound"
+      "gestureHint": "Hold 3s · Progressive haptic · \"shh...\" sound"
     },
     "detail": {
       "anonymous": "Anonymous",
       "day": "Day",
       "blurLevel": "Level",
       "expires": "expires in",
-      "guessTitle": "Who do you think it is? \ud83e\udd2b",
+      "guessTitle": "Who do you think it is? 🤫",
       "today": "Today"
     },
     "expiration": {
-      "breathing": "This heartbeat is still breathing\u2026",
-      "weakening": "The heartbeat is fading\u2026",
-      "lastMoments": "Last moments\u2026",
+      "breathing": "This heartbeat is still breathing…",
+      "weakening": "The heartbeat is fading…",
+      "lastMoments": "Last moments…",
       "existed": "This heartbeat existed."
     },
     "message": {
@@ -81,12 +81,12 @@
       "maxLength": "{{count}}/200"
     },
     "guess": {
-      "title": "Who do you think it is? \ud83e\udd2b",
-      "notThisTime": "Not this time \ud83e\udd2b",
+      "title": "Who do you think it is? 🤫",
+      "notThisTime": "Not this time 🤫",
       "attemptsLeft": "{{count}} attempts left",
-      "noMoreAttempts": "No more attempts \ud83e\udd2b"
+      "noMoreAttempts": "No more attempts 🤫"
     },
-    "share": "Share \ud83e\udd2b"
+    "share": "Share 🤫"
   },
   "audio": {
     "record": "Hold to record",
@@ -94,7 +94,7 @@
     "preview": "Listen before sending",
     "send": "Send voice",
     "screenTitle": "Voice message",
-    "filterActive": "\ud83c\udfb5 'Le Souffle' filter active",
+    "filterActive": "🎵 'Le Souffle' filter active",
     "maxDuration": "30 seconds maximum",
     "tapToRecord": "Tap to record",
     "tapToStop": "Tap to stop",
@@ -104,11 +104,11 @@
     "sendVocal": "Send this vocal"
   },
   "clue": {
-    "morning": "A question for your secret... \ud83e\udd2b",
-    "afternoon": "A clue just arrived... \ud83e\udd2b",
-    "anticipation": "Your clue arrives between 12pm and 3pm. Get ready. \ud83e\udd2b",
-    "screenTitle": "\ud83d\udd0d Clues",
-    "dayBadge": "\ud83d\udcc5 Day {{day}} \u00b7 {{count}} clues",
+    "morning": "A question for your secret... 🤫",
+    "afternoon": "A clue just arrived... 🤫",
+    "anticipation": "Your clue arrives between 12pm and 3pm. Get ready. 🤫",
+    "screenTitle": "🔍 Clues",
+    "dayBadge": "📅 Day {{day}} · {{count}} clues",
     "new": "NEW",
     "type": {
       "text": "TEXT",
@@ -117,7 +117,7 @@
       "music": "MUSIC",
       "habit": "HABIT"
     },
-    "questionLabel": "\u2753 Question",
+    "questionLabel": "❓ Question",
     "answerPlaceholder": "Your answer...",
     "sendClue": "Send the clue",
     "answered": "Clue sent"
@@ -132,29 +132,29 @@
     "seeVideo": "See the memory video",
     "sendAnother": "Send a shh to someone else",
     "videoSubtitle": "Numbers exchanged.\nYou just lived something rare.",
-    "videoLabel": "Memory video \u00b7 12s",
+    "videoLabel": "Memory video · 12s",
     "shareVideo": "Share the video"
   },
   "share": {
-    "videoCaption": "We just lived something crazy on Shh Me \ud83e\udd2b\u2728",
-    "day1": "Day 1: Someone has a secret about me\u2026 \ud83e\udd2b #ShhMe",
-    "day3": "Day 3: The clues are piling up\u2026 \ud83d\udd0d\ud83e\udd2b #ShhMe",
-    "day7": "Day 7: The reveal is getting closer\u2026 \u2764\ufe0f\ud83e\udd2b #ShhMe",
-    "reveal": "We just connected on Shh Me \ud83e\udd2b\u2728 #ShhMe #Connected"
+    "videoCaption": "We just lived something crazy on Shh Me 🤫✨",
+    "day1": "Day 1: Someone has a secret about me… 🤫 #ShhMe",
+    "day3": "Day 3: The clues are piling up… 🔍🤫 #ShhMe",
+    "day7": "Day 7: The reveal is getting closer… ❤️🤫 #ShhMe",
+    "reveal": "We just connected on Shh Me 🤫✨ #ShhMe #Connected"
   },
   "reveal": {
     "request": "Reveal",
     "cancel": "Cancel",
     "countdown": "Revealing in {{seconds}}s...",
-    "connected": "\ud83e\udd2b Connected",
-    "sendAnother": "Send a shh to someone else \ud83e\udd2b"
+    "connected": "🤫 Connected",
+    "sendAnother": "Send a shh to someone else 🤫"
   },
   "notification": {
-    "shhReceived": "Someone has a secret about you \ud83e\udd2b",
-    "newMessage": "A secret thought is waiting for you \ud83e\udd2b",
-    "audioReceived": "You received a mysterious voice \ud83e\udd2b",
-    "photoUnblurred": "Your secret admirer's photo is clearer\u2026 \ud83e\udd2b",
-    "revealReady": "The reveal is ready. Do you dare? \ud83e\udd2b"
+    "shhReceived": "Someone has a secret about you 🤫",
+    "newMessage": "A secret thought is waiting for you 🤫",
+    "audioReceived": "You received a mysterious voice 🤫",
+    "photoUnblurred": "Your secret admirer's photo is clearer… 🤫",
+    "revealReady": "The reveal is ready. Do you dare? 🤫"
   },
   "settings": {
     "title": "Settings",
@@ -182,20 +182,29 @@
     "shhLifetime": "Shhs lifetime"
   },
   "community": {
-    "counter": "{{count}} people near you are using Shh Me \ud83e\udd2b"
+    "counter": "{{count}} people near you are using Shh Me 🤫"
   },
   "offline": {
-    "pending": "Your shh will be sent when you're back online \ud83e\udd2b"
+    "pending": "Your shh will be sent when you're back online 🤫"
   },
   "error": {
-    "generic": "Something didn't work. Try again \ud83e\udd2b",
-    "network": "No connection. Don't worry, we'll sync when you're back \ud83e\udd2b",
-    "boundary": "Something isn't right \ud83e\udd2b \u2014 Try again"
+    "generic": "Something didn't work. Try again 🤫",
+    "network": "No connection. Don't worry, we'll sync when you're back 🤫",
+    "boundary": "Something isn't right 🤫 — Try again"
   },
   "ghost": {
-    "push": "People near you sent a shh tonight \ud83e\udd2b"
+    "push": "People near you sent a shh tonight 🤫"
   },
   "relance": {
-    "gentle": "Something sweet is waiting for you whenever you want. No rush. \ud83e\udd2b"
+    "gentle": "Something sweet is waiting for you whenever you want. No rush. 🤫"
+  },
+  "feedback": {
+    "title": "We're listening 🤫",
+    "bug": "Something's not working",
+    "idea": "I have an idea",
+    "unhappy": "I'm disappointed",
+    "optional_message": "Details (optional)",
+    "send": "Send 🤫",
+    "thanks": "Thank you for your feedback 🤫"
   }
 }

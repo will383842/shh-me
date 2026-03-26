@@ -2,7 +2,7 @@
  * SettingsScreen — Immersive 2026 settings with yellow bg.
  * Sections with custom toggles, danger zone, panic exit.
  */
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   View,
   ScrollView,
@@ -24,6 +24,7 @@ import ShhText from '../../components/atoms/ShhText';
 import { useAuthStore } from '../../stores/useAuthStore';
 import { useSettingsStore } from '../../stores/useSettingsStore';
 import { apiRequest } from '../../services/api';
+import FeedbackSheet from '../../components/organisms/FeedbackSheet';
 import type { RootStackParamList } from '../../types';
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
@@ -154,6 +155,10 @@ export default function SettingsScreen() {
   const [newShhNotif, setNewShhNotif] = useState(true);
   const [messageNotif, setMessageNotif] = useState(true);
   const [guessNotif, setGuessNotif] = useState(true);
+  const [feedbackVisible, setFeedbackVisible] = useState(false);
+
+  const openFeedback = useCallback(() => setFeedbackVisible(true), []);
+  const closeFeedback = useCallback(() => setFeedbackVisible(false), []);
 
   const handleToggleNotifications = (value: boolean) => {
     setNotificationsEnabled(value);
@@ -327,7 +332,7 @@ export default function SettingsScreen() {
           <SettingItem
             icon="❓"
             label={t('settings.helpFeedback')}
-            onPress={() => Linking.openURL('mailto:help@shh-me.com')}
+            onPress={openFeedback}
             isFirst
           />
           <SettingItem
@@ -365,6 +370,9 @@ export default function SettingsScreen() {
 
         <View style={{ height: 100 }} />
       </ScrollView>
+
+      {/* Feedback bottom sheet */}
+      <FeedbackSheet visible={feedbackVisible} onClose={closeFeedback} />
     </SafeAreaView>
   );
 }
